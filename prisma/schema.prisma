@@ -1,0 +1,73 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
+model CorporatePolicy {
+  id                       String   @id @default(uuid())
+  title                    String
+  purpose                  String
+  scope                    String
+  policyStatement          String
+  responsibilities         String
+  procedures               String
+  complianceAndEnforcement String
+  definitions              String
+  effectiveDate            DateTime
+  escalationProcess        Json     // Stores as JSON array
+
+  version                  Int      @default(1)
+  isArchived               Boolean  @default(false)
+
+  revisionHistory          PolicyAudit[]
+}
+
+model PolicyAudit {
+  id                String   @id @default(uuid())
+  policyId          String
+  version           Int
+  updatedAt         DateTime @default(now())
+  updatedBy         String?
+  archivedContent   Json     // Stores the entire previous state
+
+  policy            CorporatePolicy @relation(fields: [policyId], references: [id])
+}
+
+model HandbookSection {
+  id               String   @id @default(uuid())
+  title            String
+  content          String
+  applicableStates String[] // e.g., ["CA", "NY", "ALL"]
+  orderIndex       Int      @default(0)
+}
+
+model HandbookSignature {
+  id                String   @id @default(uuid())
+  userId            String
+  ipAddress         String?
+  timestamp         DateTime @default(now())
+  cryptographicHash String   // Immutable hash representing the acknowledgment
+}
+
+model StoreSOP {
+  id          String     @id @default(uuid())
+  title       String
+  description String
+  content     String
+  iconName    String     @default("FileText") // Lucide icon name
+
+  tasks       TaskItem[]
+}
+
+model TaskItem {
+  id          String    @id @default(uuid())
+  title       String
+  isCompleted Boolean   @default(false)
+
+  sopId       String?
+  sop         StoreSOP? @relation(fields: [sopId], references: [id])
+}
