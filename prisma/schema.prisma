@@ -1,5 +1,6 @@
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -61,6 +62,8 @@ model User {
   assignedDepartments String[]
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  storeId             String?
+  store               Store?   @relation(fields: [storeId], references: [id])
 }
 
 model StoreSOP {
@@ -95,4 +98,48 @@ model TaskItem {
 
   sopId String?
   sop   StoreSOP? @relation(fields: [sopId], references: [id])
+}
+
+model Store {
+  id                   String @id @default(uuid())
+  name                 String
+  state                String
+  latitude             Float?
+  longitude            Float?
+  healthScore          Int    @default(100)
+  openTime             String @default("09:00") // HH:mm format
+  districtManagerEmail String?
+  timezone             String @default("America/New_York")
+  
+  taskInstances        TaskInstance[]
+  users                User[]
+}
+
+model TaskTemplate {
+  id              String   @id @default(uuid())
+  title           String
+  description     String
+  scheduledTime   String?  // HH:mm format
+  isCritical      Boolean  @default(false)
+  requiredSteps   Json     // Array of steps
+  assignedRoles   String[] 
+  
+  instances       TaskInstance[]
+}
+
+model TaskInstance {
+  id                 String    @id @default(uuid())
+  templateId         String
+  storeId            String
+  date               DateTime  @db.Date
+  status             String    @default("PENDING") // PENDING, COMPLETED, BLOCKED
+  completedAt        DateTime?
+  blockerReasonCode  String?
+  blockerExplanation String?
+  currentStep        Int       @default(0)
+  
+  template           TaskTemplate @relation(fields: [templateId], references: [id])
+  store              Store        @relation(fields: [storeId], references: [id])
+  
+  @@unique([templateId, storeId, date])
 }
