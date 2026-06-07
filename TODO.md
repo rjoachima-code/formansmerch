@@ -1,25 +1,8 @@
-- [x] Update eslint.config.js to declare inline UI handler names as readonly globals for browser-linted files
-- [x] Fix unused `index` parameter in `forEach` in script.js
-- [x] Fix unused `index` parameter in `forEach` in script2.js
-- [x] Fix unused `index` parameter in `forEach` in index.html embedded script
-- [x] Fix `require` undefined in fix.js by converting to ESM import
-- [x] Run `npx eslint .` and confirm zero errors
-- [x] Update TODO.md with completion status
-- [ ] Remove conveyor infrastructure from Backroom Pad data and references
-- [ ] Expand SOP Training Blueprints with department-wide modules and descriptions
-- [ ] Update SOP module dropdown options to match expanded blueprint set
-- [ ] Mirror required content updates in script.js and script2.js
-- [ ] Re-run `npx eslint .` and confirm zero errors
-- [ ] Stage intended files, commit with meaningful message, and push branch
-- [ ] Open PR into `main`
+# Accessibility & Compatibility Fix Plan
 
-## Active Implementation Plan
-- [ ] Update `script.js` Backroom department naming/content and remove conveyor references
-- [ ] Update `script2.js` Backroom department naming/content and remove conveyor references
-- [ ] Expand SOP blueprint cards in `index.html`
-- [ ] Update SOP module dropdown options in `index.html`
-- [ ] Mirror SOP content updates in `script.js`
-- [ ] Mirror SOP content updates in `script2.js`
-- [ ] Run `npx eslint .`
-- [ ] Mark completed TODO items
-- [ ] Stage, commit, push, and open PR
+- [x] Add robust cross-browser scrollbar fallback styles in `index.html` (`::-webkit-scrollbar` support alongside existing rules).
+- [x] Add explicit `id` + matching `for` attributes for visible labels where missing.
+- [x] Add `aria-label` and `title` attributes to all form controls (`input`, `select`, `textarea`) in Planner, Audit, Dispatcher, and SOP sections.
+- [x] Add placeholders to eligible text-capable fields where needed.
+- [x] Preserve all existing business logic and data constants exactly (no logic rewrite).
+- [x] Validate final HTML structure remains single-file deployable.
