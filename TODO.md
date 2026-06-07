@@ -1,7 +1,14 @@
-- [ ] Update eslint.config.js to declare inline UI handler names as readonly globals for browser-linted files
-- [ ] Fix unused `index` parameter in `forEach` in script.js
-- [ ] Fix unused `index` parameter in `forEach` in script2.js
-- [ ] Fix unused `index` parameter in index.html embedded script
-- [ ] Fix `require` undefined in fix.js by converting to ESM import
-- [ ] Run `npx eslint .` and confirm zero errors
-- [ ] Update TODO.md with completion status
+- [x] Update eslint.config.js to declare inline UI handler names as readonly globals for browser-linted files
+- [x] Fix unused `index` parameter in `forEach` in script.js
+- [x] Fix unused `index` parameter in `forEach` in script2.js
+- [x] Fix unused `index` parameter in index.html embedded script
+- [x] Fix `require` undefined in fix.js by converting to ESM import
+- [x] Run `npx eslint .` and confirm zero errors
+- [x] Update TODO.md with completion status
+- [ ] Remove conveyor infrastructure from Backroom Pad data and references
+- [ ] Expand SOP Training Blueprints with department-wide modules and descriptions
+- [ ] Update SOP module dropdown options to match expanded blueprint set
+- [ ] Mirror required content updates in script.js and script2.js
+- [ ] Re-run `npx eslint .` and confirm zero errors
+- [ ] Stage intended files, commit with meaningful message, and push branch
+- [ ] Open PR into `main`

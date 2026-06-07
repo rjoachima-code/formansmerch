@@ -182,20 +182,44 @@
                 <h2 class="text-lg font-bold mb-4 text-navy border-b pb-2">SOP Training Academy (Thrive Blueprints)</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div class="p-3 bg-slate-50 border rounded">
-                        <strong class="text-navy block mb-1">1. Sizing Array Mastery</strong>
-                        <p class="text-xs text-gray-600">Strict left-to-right sorting on all hung fixtures. Smallest to largest.</p>
+                        <strong class="text-navy block mb-1">1. Sizing Array Mastery (Apparel)</strong>
+                        <p class="text-xs text-gray-600">Strict left-to-right sorting on all hung fixtures from smallest to largest with active recovery every zone.</p>
                     </div>
                     <div class="p-3 bg-slate-50 border rounded">
-                        <strong class="text-navy block mb-1">2. Shelf Z-Lining</strong>
-                        <p class="text-xs text-gray-600">Hardlines and boxed goods pulled forward flush to the shelf edge.</p>
+                        <strong class="text-navy block mb-1">2. Color Flow Zoning (Apparel)</strong>
+                        <p class="text-xs text-gray-600">Maintain light-to-dark and warm-to-cool color sequencing by brand block for visual shopability.</p>
                     </div>
                     <div class="p-3 bg-slate-50 border rounded">
-                        <strong class="text-navy block mb-1">3. Hanger Presentation</strong>
-                        <p class="text-xs text-gray-600">Question mark (?) hook configuration facing left on all racks.</p>
+                        <strong class="text-navy block mb-1">3. Shelf Z-Lining (Home & Hardlines)</strong>
+                        <p class="text-xs text-gray-600">Hardlines and boxed goods pulled forward flush to shelf edge with labels visible and safe stack heights.</p>
                     </div>
                     <div class="p-3 bg-slate-50 border rounded">
-                        <strong class="text-navy block mb-1">4. Coordinate Set Maintenance</strong>
-                        <p class="text-xs text-gray-600">Two-piece items securely clipped on single hanger structures.</p>
+                        <strong class="text-navy block mb-1">4. Kids Size Integrity (Kids Department)</strong>
+                        <p class="text-xs text-gray-600">Separate infant, toddler, and youth flows while preserving full size runs and signed transitions.</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 border rounded">
+                        <strong class="text-navy block mb-1">5. Hanger Presentation (Softlines)</strong>
+                        <p class="text-xs text-gray-600">Question-mark hook orientation facing left with consistent hanger type and no broken hanger usage.</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 border rounded">
+                        <strong class="text-navy block mb-1">6. Coordinate Set Maintenance (Fashion)</strong>
+                        <p class="text-xs text-gray-600">Two-piece and outfit-driven coordinates clipped and merchandised together with complete component visibility.</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 border rounded">
+                        <strong class="text-navy block mb-1">7. Front End Queue Readiness (Customer Service)</strong>
+                        <p class="text-xs text-gray-600">Q-line impulse faced, return baskets cleared, and cash wrap station reset for peak transaction flow.</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 border rounded">
+                        <strong class="text-navy block mb-1">8. Backroom Pad Safety & Flow (Backroom)</strong>
+                        <p class="text-xs text-gray-600">Aisles and emergency exits clear, pallets stable, salvage contained, and dock security checks completed.</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 border rounded">
+                        <strong class="text-navy block mb-1">9. LP Awareness & Incident Escalation (Support/LP)</strong>
+                        <p class="text-xs text-gray-600">Door coverage, suspicious activity escalation, and incident documentation protocol alignment.</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 border rounded">
+                        <strong class="text-navy block mb-1">10. Recovery Cadence & Handoff Discipline (All Departments)</strong>
+                        <p class="text-xs text-gray-600">Structured hourly recovery cadence and clean shift handoff notes for continuity and accountability.</p>
                     </div>
                 </div>
 
@@ -209,10 +233,16 @@
                         <label class="block text-sm font-bold text-gray-700 mb-1">Module Reviewed</label>
                         <select id="sop-module" data-save="true" class="w-full border border-gray-300 rounded p-3 touch-target bg-white">
                             <option value="">Select Module...</option>
-                            <option value="Sizing Array Mastery">1. Sizing Array Mastery</option>
-                            <option value="Shelf Z-Lining">2. Shelf Z-Lining</option>
-                            <option value="Hanger Presentation">3. Hanger Presentation</option>
-                            <option value="Coordinate Set Maintenance">4. Coordinate Set Maintenance</option>
+                            <option value="Sizing Array Mastery (Apparel)">1. Sizing Array Mastery (Apparel)</option>
+                            <option value="Color Flow Zoning (Apparel)">2. Color Flow Zoning (Apparel)</option>
+                            <option value="Shelf Z-Lining (Home & Hardlines)">3. Shelf Z-Lining (Home & Hardlines)</option>
+                            <option value="Kids Size Integrity (Kids Department)">4. Kids Size Integrity (Kids Department)</option>
+                            <option value="Hanger Presentation (Softlines)">5. Hanger Presentation (Softlines)</option>
+                            <option value="Coordinate Set Maintenance (Fashion)">6. Coordinate Set Maintenance (Fashion)</option>
+                            <option value="Front End Queue Readiness (Customer Service)">7. Front End Queue Readiness (Customer Service)</option>
+                            <option value="Backroom Pad Safety & Flow (Backroom)">8. Backroom Pad Safety & Flow (Backroom)</option>
+                            <option value="LP Awareness & Incident Escalation (Support/LP)">9. LP Awareness & Incident Escalation (Support/LP)</option>
+                            <option value="Recovery Cadence & Handoff Discipline (All Departments)">10. Recovery Cadence & Handoff Discipline (All Departments)</option>
                         </select>
                     </div>
                     <button type="button" onclick="logSOP()" class="w-full bg-navy text-white font-bold py-3 rounded shadow touch-target">Log Training Record</button>
@@ -270,7 +300,7 @@
                 "Kids Department": ["Boys", "Boy Infants & Toddlers", "Girls", "Girl Infants & Toddlers", "Kids Clearance", "Kids Footwear", "Under-Fixture Housekeeping"],
                 "Home Department": ["All Home Goods (Z-Lining)", "Label Facing", "Toys Pad", "Heavy Safety", "Linen & Bedding", "Home Clearance", "Stray Recovery"],
                 "Customer Service / Front End": ["Perfume & Cologne Tables (Lockboxes)", "Q-Line Impulse Density", "Q-Line FIFO", "Cash Wrap Station", "POS Return Baskets", "Value Drop Signage", "Cart Bay"],
-                "Backroom Logistics": ["Conveyor Line Clearance", "FIFO Freight", "Emergency Exit Clears", "Security Dock Doors", "Pallet Stacking", "Salvage Bins", "Logistics Sweep"]
+                "Backroom Pad": ["Backstock Organization", "FIFO Freight", "Emergency Exit Clears", "Security Dock Doors", "Pallet Stacking", "Salvage Bins", "Logistics Sweep"]
             },
             upgrades: [
                 "Consolidating clearance runs",
@@ -398,7 +428,7 @@
         function calculateScores() {
             let totalScore = 0;
             let safetyPasses = 0;
-            const safetyCriticalDepts = ['CustomerServiceFrontEnd', 'HomeDepartment', 'BackroomLogistics'];
+            const safetyCriticalDepts = ['CustomerServiceFrontEnd', 'HomeDepartment', 'BackroomPad'];
 
             Object.keys(DATA.departments).forEach(dept => {
                 const safeId = dept.replace(/[^a-zA-Z0-9]/g, '');
