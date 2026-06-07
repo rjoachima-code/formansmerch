@@ -1,0 +1,7 @@
+- [ ] Update eslint.config.js to declare inline UI handler names as readonly globals for browser-linted files
+- [ ] Fix unused `index` parameter in `forEach` in script.js
+- [ ] Fix unused `index` parameter in `forEach` in script2.js
+- [ ] Fix unused `index` parameter in index.html embedded script
+- [ ] Fix `require` undefined in fix.js by converting to ESM import
+- [ ] Run `npx eslint .` and confirm zero errors
+- [ ] Update TODO.md with completion status
