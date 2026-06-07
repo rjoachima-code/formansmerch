@@ -18,23 +18,23 @@ model CorporatePolicy {
   complianceAndEnforcement String
   definitions              String
   effectiveDate            DateTime
-  escalationProcess        Json     // Stores as JSON array
+  escalationProcess        Json // Stores as JSON array
 
-  version                  Int      @default(1)
-  isArchived               Boolean  @default(false)
+  version    Int     @default(1)
+  isArchived Boolean @default(false)
 
-  revisionHistory          PolicyAudit[]
+  revisionHistory PolicyAudit[]
 }
 
 model PolicyAudit {
-  id                String   @id @default(uuid())
-  policyId          String
-  version           Int
-  updatedAt         DateTime @default(now())
-  updatedBy         String?
-  archivedContent   Json     // Stores the entire previous state
+  id              String   @id @default(uuid())
+  policyId        String
+  version         Int
+  updatedAt       DateTime @default(now())
+  updatedBy       String?
+  archivedContent Json // Stores the entire previous state
 
-  policy            CorporatePolicy @relation(fields: [policyId], references: [id])
+  policy CorporatePolicy @relation(fields: [policyId], references: [id])
 }
 
 model HandbookSection {
@@ -50,24 +50,49 @@ model HandbookSignature {
   userId            String
   ipAddress         String?
   timestamp         DateTime @default(now())
-  cryptographicHash String   // Immutable hash representing the acknowledgment
+  cryptographicHash String // Immutable hash representing the acknowledgment
+}
+
+model User {
+  id                  String   @id @default(uuid())
+  email               String   @unique
+  name                String?
+  role                String?
+  assignedDepartments String[]
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 model StoreSOP {
-  id          String     @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String
   content     String
-  iconName    String     @default("FileText") // Lucide icon name
+  iconName    String   @default("FileText") // Lucide icon name
+  departments String[]
 
   tasks       TaskItem[]
+  suggestions ProcedureImprovementSuggestion[]
+}
+
+model ProcedureImprovementSuggestion {
+  id                String   @id @default(uuid())
+  sopId             String
+  submittedByUserId String?
+  submittedByName   String
+  submittedByRole   String?
+  department        String
+  suggestion        String
+  createdAt         DateTime @default(now())
+
+  sop StoreSOP @relation(fields: [sopId], references: [id])
 }
 
 model TaskItem {
-  id          String    @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
-  isCompleted Boolean   @default(false)
+  isCompleted Boolean @default(false)
 
-  sopId       String?
-  sop         StoreSOP? @relation(fields: [sopId], references: [id])
+  sopId String?
+  sop   StoreSOP? @relation(fields: [sopId], references: [id])
 }
