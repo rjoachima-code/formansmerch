@@ -1,7 +1,7 @@
 - [x] Update eslint.config.js to declare inline UI handler names as readonly globals for browser-linted files
 - [x] Fix unused `index` parameter in `forEach` in script.js
 - [x] Fix unused `index` parameter in `forEach` in script2.js
-- [x] Fix unused `index` parameter in index.html embedded script
+- [x] Fix unused `index` parameter in `forEach` in index.html embedded script
 - [x] Fix `require` undefined in fix.js by converting to ESM import
 - [x] Run `npx eslint .` and confirm zero errors
 - [x] Update TODO.md with completion status
@@ -12,3 +12,14 @@
 - [ ] Re-run `npx eslint .` and confirm zero errors
 - [ ] Stage intended files, commit with meaningful message, and push branch
 - [ ] Open PR into `main`
+
+## Active Implementation Plan
+- [ ] Update `script.js` Backroom department naming/content and remove conveyor references
+- [ ] Update `script2.js` Backroom department naming/content and remove conveyor references
+- [ ] Expand SOP blueprint cards in `index.html`
+- [ ] Update SOP module dropdown options in `index.html`
+- [ ] Mirror SOP content updates in `script.js`
+- [ ] Mirror SOP content updates in `script2.js`
+- [ ] Run `npx eslint .`
+- [ ] Mark completed TODO items
+- [ ] Stage, commit, push, and open PR

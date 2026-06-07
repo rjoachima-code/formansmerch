@@ -25,7 +25,7 @@
                 "Kids Department": ["Boys", "Boy Infants & Toddlers", "Girls", "Girl Infants & Toddlers", "Kids Clearance", "Kids Footwear", "Under-Fixture Housekeeping"],
                 "Home Department": ["All Home Goods (Z-Lining)", "Label Facing", "Toys Pad", "Heavy Safety", "Linen & Bedding", "Home Clearance", "Stray Recovery"],
                 "Customer Service / Front End": ["Perfume & Cologne Tables (Lockboxes)", "Q-Line Impulse Density", "Q-Line FIFO", "Cash Wrap Station", "POS Return Baskets", "Value Drop Signage", "Cart Bay"],
-                "Backroom Logistics": ["Conveyor Line Clearance", "FIFO Freight", "Emergency Exit Clears", "Security Dock Doors", "Pallet Stacking", "Salvage Bins", "Logistics Sweep"]
+                "Backroom Pad": ["Backstock Organization", "FIFO Freight", "Emergency Exit Clears", "Security Dock Doors", "Pallet Stacking", "Salvage Bins", "Logistics Sweep"]
             },
             upgrades: [
                 "Consolidating clearance runs",
@@ -153,7 +153,7 @@
         function calculateScores() {
             let totalScore = 0;
             let safetyPasses = 0;
-            const safetyCriticalDepts = ['CustomerServiceFrontEnd', 'HomeDepartment', 'BackroomLogistics'];
+            const safetyCriticalDepts = ['CustomerServiceFrontEnd', 'HomeDepartment', 'BackroomPad'];
 
             Object.keys(DATA.departments).forEach(dept => {
                 const safeId = dept.replace(/[^a-zA-Z0-9]/g, '');
