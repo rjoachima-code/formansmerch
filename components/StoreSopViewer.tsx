@@ -9,6 +9,14 @@ export interface StoreSOP {
   description: string;
   content: string;
   iconName: string;
+  departments: string[];
+}
+
+interface CurrentUserContext {
+  id: string;
+  name: string;
+  role: string;
+  assignedDepartments: string[];
 }
 
 const IconMap: Record<string, React.ReactNode> = {
@@ -30,6 +38,17 @@ export default function StoreSopViewer({ initialSearchQuery = '', focusedSopId, 
   const [sops, setSops] = useState<StoreSOP[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(focusedSopId || null);
+  const [suggestionText, setSuggestionText] = useState<Record<string, string>>({});
+  const [submittingSuggestionFor, setSubmittingSuggestionFor] = useState<string | null>(null);
+  const [suggestionStatus, setSuggestionStatus] = useState<Record<string, string>>({});
+
+  // Demo user context until real auth/session is wired
+  const currentUser: CurrentUserContext = {
+    id: 'demo-user-id',
+    name: 'Department Lead',
+    role: 'Department Lead',
+    assignedDepartments: ['Operations', 'Safety', 'Inventory']
+  };
 
   // Sync focusedSopId prop changes
   useEffect(() => {
@@ -47,7 +66,9 @@ export default function StoreSopViewer({ initialSearchQuery = '', focusedSopId, 
   const fetchSops = async (searchQuery: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/sops?q=${encodeURIComponent(searchQuery)}`);
+      const res = await fetch(
+        `/api/sops?q=${encodeURIComponent(searchQuery)}&userId=${encodeURIComponent(currentUser.id)}`
+      );
       if (res.ok) {
         const data = await res.json();
         setSops(data.sops || []);
@@ -66,6 +87,71 @@ export default function StoreSopViewer({ initialSearchQuery = '', focusedSopId, 
 
   const toggleAccordion = (id: string) => {
     setExpandedId(prev => (prev === id ? null : id));
+  };
+
+  const handleSuggestionChange = (sopId: string, value: string) => {
+    setSuggestionText((prev) => ({ ...prev, [sopId]: value }));
+    setSuggestionStatus((prev) => ({ ...prev, [sopId]: '' }));
+  };
+
+  const handleSubmitSuggestion = async (sop: StoreSOP) => {
+    const text = (suggestionText[sop.id] || '').trim();
+    if (text.length < 20) {
+      setSuggestionStatus((prev) => ({
+        ...prev,
+        [sop.id]: 'Suggestion must be at least 20 characters.'
+      }));
+      return;
+    }
+
+    const matchedDepartment =
+      sop.departments.find((department) =>
+        currentUser.assignedDepartments
+          .map((d) => d.toLowerCase())
+          .includes(department.toLowerCase())
+      ) || sop.departments[0] || '';
+
+    setSubmittingSuggestionFor(sop.id);
+    setSuggestionStatus((prev) => ({ ...prev, [sop.id]: '' }));
+
+    try {
+      const res = await fetch('/api/sops/suggestions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sopId: sop.id,
+          userId: currentUser.id,
+          submittedByName: currentUser.name,
+          submittedByRole: currentUser.role,
+          department: matchedDepartment,
+          suggestion: text
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSuggestionStatus((prev) => ({
+          ...prev,
+          [sop.id]: data.error || 'Failed to submit suggestion.'
+        }));
+        return;
+      }
+
+      setSuggestionStatus((prev) => ({
+        ...prev,
+        [sop.id]: 'Suggestion submitted to the Corporate SOP Documentation Specialist.'
+      }));
+      setSuggestionText((prev) => ({ ...prev, [sop.id]: '' }));
+    } catch (err) {
+      console.error('Failed to submit suggestion:', err);
+      setSuggestionStatus((prev) => ({
+        ...prev,
+        [sop.id]: 'Failed to submit suggestion.'
+      }));
+    } finally {
+      setSubmittingSuggestionFor(null);
+    }
   };
 
   return (
@@ -174,8 +260,58 @@ export default function StoreSopViewer({ initialSearchQuery = '', focusedSopId, 
                     lineHeight: '1.6',
                     color: '#374151'
                   }}>
-                    <div style={{ whiteSpace: 'pre-wrap' }}>
+                    <div style={{ whiteSpace: 'pre-wrap', marginBottom: '1rem' }}>
                       {sop.content}
+                    </div>
+
+                    <div style={{ marginBottom: '1rem', fontSize: '0.9rem', color: '#4b5563' }}>
+                      <strong>Departments:</strong> {sop.departments.join(', ')}
+                    </div>
+
+                    <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
+                      <h4 style={{ margin: '0 0 0.75rem 0', color: '#111827' }}>
+                        Procedure Improvement Suggestions
+                      </h4>
+                      <textarea
+                        value={suggestionText[sop.id] || ''}
+                        onChange={(e) => handleSuggestionChange(sop.id, e.target.value)}
+                        placeholder="Share actionable feedback to improve this procedure..."
+                        rows={4}
+                        style={{
+                          width: '100%',
+                          resize: 'vertical',
+                          borderRadius: '8px',
+                          border: '1px solid #d1d5db',
+                          padding: '0.75rem',
+                          fontSize: '0.95rem',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+                        <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+                          Minimum 20 characters
+                        </span>
+                        <button
+                          onClick={() => handleSubmitSuggestion(sop)}
+                          disabled={submittingSuggestionFor === sop.id}
+                          style={{
+                            padding: '0.5rem 0.9rem',
+                            borderRadius: '6px',
+                            border: '1px solid #2563eb',
+                            backgroundColor: submittingSuggestionFor === sop.id ? '#93c5fd' : '#2563eb',
+                            color: '#ffffff',
+                            cursor: submittingSuggestionFor === sop.id ? 'not-allowed' : 'pointer',
+                            fontWeight: 600
+                          }}
+                        >
+                          {submittingSuggestionFor === sop.id ? 'Submitting...' : 'Submit Suggestion'}
+                        </button>
+                      </div>
+                      {suggestionStatus[sop.id] && (
+                        <p style={{ marginTop: '0.5rem', color: suggestionStatus[sop.id].toLowerCase().includes('submitted') ? '#059669' : '#dc2626' }}>
+                          {suggestionStatus[sop.id]}
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
