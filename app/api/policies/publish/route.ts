@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     let savedPolicy;
 
     if (existingPolicy) {
-      savedPolicy = await prisma.$transaction(async (tx) => {
+      savedPolicy = await prisma.$transaction(async (tx: typeof prisma) => {
         await tx.policyAudit.create({
           data: {
             policyId: existingPolicy.id,
