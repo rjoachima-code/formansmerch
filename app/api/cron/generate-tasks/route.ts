@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
     // In a real scenario, this would be protected by an API key or Vercel Cron secret
     // to prevent unauthorized invocation.
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, createdCount });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Failed to generate tasks:", error);
     return NextResponse.json({ success: false, error: "Internal Server Error" }, { status: 500 });
   }

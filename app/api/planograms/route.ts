@@ -14,7 +14,7 @@ export async function GET() {
       }
     })
     return NextResponse.json({ directives })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching planograms:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }

@@ -1,8 +1,6 @@
-'use client'
-
 import React, { useState, useRef, useEffect } from 'react'
-import { Camera, Upload, CheckCircle, AlertCircle, Calendar } from 'lucide-react'
-import { compressImage, formatFileSize } from '@/lib/imageProcessor'
+import { Camera, CheckCircle, AlertCircle, Calendar } from 'lucide-react'
+import { compressImage } from '@/lib/imageProcessor'
 
 interface PlanogramDirective {
   id: string
@@ -53,8 +51,8 @@ export default function ExecutePlanogramPage() {
           setDirective(data.directives[0])
         }
       }
-    } catch (error) {
-      console.error('Failed to fetch directive:', error)
+    } catch {
+      console.error('Failed to fetch directive')
     } finally {
       setLoading(false)
     }
@@ -71,7 +69,7 @@ export default function ExecutePlanogramPage() {
         videoRef.current.srcObject = stream
       }
       setCameraActive(true)
-    } catch (error) {
+    } catch {
       setMessage({ type: 'error', text: 'Camera access denied. Please allow camera permissions.' })
     }
   }
@@ -151,8 +149,9 @@ export default function ExecutePlanogramPage() {
         const data = await complianceRes.json()
         throw new Error(data.error || 'Submission failed')
       }
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message })
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Upload failed'
+      setMessage({ type: 'error', text: message })
     } finally {
       setUploading(false)
     }

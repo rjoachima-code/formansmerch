@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import nodemailer from 'nodemailer';
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
     const stores = await prisma.store.findMany({
       include: {
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, alertsSent });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Failed to check store openings:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

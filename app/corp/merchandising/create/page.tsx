@@ -34,7 +34,6 @@ export default function CreatePlanogramPage() {
   const [selectedFixtures, setSelectedFixtures] = useState<string[]>([])
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>('')
-  const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -107,8 +106,9 @@ export default function CreatePlanogramPage() {
         const data = await createRes.json()
         throw new Error(data.error || 'Failed to create directive')
       }
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message })
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Submission failed';
+      setMessage({ type: 'error', text: message });
     } finally {
       setSubmitting(false)
     }

@@ -30,8 +30,8 @@ export default function CriticalTaskFlow() {
       const res = await fetch('/api/tasks/critical');
       const data = await res.json();
       setTask(data.task);
-    } catch (e) {
-      console.error(e);
+    } catch {
+      console.error('Failed to fetch task');
     } finally {
       setLoading(false);
     }
@@ -59,9 +59,9 @@ export default function CriticalTaskFlow() {
             },
             { enableHighAccuracy: true }
           );
-        }).catch(err => {
-          throw new Error("Geolocation access denied or failed.");
-        });
+        }).catch(() => {
+            throw new Error("Geolocation access denied or failed.");
+          });
       }
 
       const res = await fetch('/api/tasks/critical-step', {
@@ -84,8 +84,8 @@ export default function CriticalTaskFlow() {
       const data = await res.json();
       setTask(data.task);
 
-    } catch (error: any) {
-      setGeoError(error.message);
+    } catch (error: unknown) {
+      setGeoError(error instanceof Error ? error.message : "Failed to synchronize step with server");
     } finally {
       setSyncing(false);
     }
@@ -103,14 +103,18 @@ export default function CriticalTaskFlow() {
     );
   }
 
-  // Handle parsing JSON steps safely
-  let steps: any[] = [];
+  type Step = {
+  label: string;
+  details: string;
+};
+
+let steps: Step[] = [];
   try {
     steps = typeof task.template.requiredSteps === 'string' 
-      ? JSON.parse(task.template.requiredSteps) 
+      ? JSON.parse(task.template.requiredSteps as string) 
       : task.template.requiredSteps;
     if (!Array.isArray(steps)) steps = [];
-  } catch(e) {
+  } catch {
     steps = [];
   }
 

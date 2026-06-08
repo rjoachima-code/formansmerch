@@ -52,8 +52,8 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ sops: authorizedSops });
-  } catch (error: any) {
-    console.error('Error fetching SOPs:', error);
+} catch (error: unknown) {
+    console.error('Error fetching tasks:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

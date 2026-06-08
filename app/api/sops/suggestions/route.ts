@@ -1,34 +1,30 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { hasDepartmentAccess } from '@/lib/departmentAccess';
+import { z } from 'zod';
 
-type SuggestionPayload = {
-  sopId?: string;
-  userId?: string;
-  submittedByName?: string;
-  submittedByRole?: string;
-  department?: string;
-  suggestion?: string;
-};
+const SuggestionSchema = z.object({
+  sopId: z.string().uuid(),
+  userId: z.string().uuid(),
+  submittedByName: z.string().min(1),
+  submittedByRole: z.string().optional(),
+  department: z.string().min(1),
+  suggestion: z.string().min(20)
+});
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json()) as SuggestionPayload;
-    const { sopId, userId, submittedByName, submittedByRole, department, suggestion } = body;
+    const body = await req.json();
+    const parsed = SuggestionSchema.safeParse(body);
 
-    if (!sopId || !userId || !submittedByName || !department || !suggestion) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Missing required fields: sopId, userId, submittedByName, department, suggestion.' },
+        { error: parsed.error.errors[0].message },
         { status: 400 }
       );
     }
 
-    if (suggestion.trim().length < 20) {
-      return NextResponse.json(
-        { error: 'Suggestion must be at least 20 characters long.' },
-        { status: 400 }
-      );
-    }
+    const { sopId, userId, submittedByName, submittedByRole, department, suggestion } = parsed.data;
 
     const [user, sop] = await Promise.all([
       prisma.user.findUnique({
@@ -73,7 +69,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ suggestion: createdSuggestion }, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating SOP suggestion:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
