@@ -56,7 +56,7 @@ export default function AdminPoliciesPage() {
       } else {
         setMessage(`Error: ${result.error}`);
       }
-    } catch (err) {
+    } catch {
       setMessage('Failed to publish policy');
     }
   };

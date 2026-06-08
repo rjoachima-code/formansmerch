@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from 'react'
 import { Camera, CheckCircle, AlertCircle, Calendar } from 'lucide-react'
 import { compressImage } from '@/lib/imageProcessor'

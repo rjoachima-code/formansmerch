@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     const parsed = PolicySchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
+      return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
     const existingPolicy = await prisma.corporatePolicy.findFirst({
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     let savedPolicy;
 
     if (existingPolicy) {
-      savedPolicy = await prisma.$transaction(async (tx) => {
+      savedPolicy = await prisma.$transaction(async (tx: typeof prisma) => {
         await tx.policyAudit.create({
           data: {
             policyId: existingPolicy.id,
@@ -62,13 +62,13 @@ export async function POST(req: Request) {
         return tx.corporatePolicy.update({
           where: { id: existingPolicy.id },
           data: {
-            purpose: parsed.data.purpose,
-            scope: parsed.data.scope,
-            policyStatement: parsed.data.policyStatement,
-            responsibilities: parsed.data.responsibilities,
-            procedures: parsed.data.procedures,
-            complianceAndEnforcement: parsed.data.complianceAndEnforcement,
-            definitions: parsed.data.definitions,
+            purpose: parsed.data.purpose || '',
+            scope: parsed.data.scope || '',
+            policyStatement: parsed.data.policyStatement || '',
+            responsibilities: parsed.data.responsibilities || '',
+            procedures: parsed.data.procedures || '',
+            complianceAndEnforcement: parsed.data.complianceAndEnforcement || '',
+            definitions: parsed.data.definitions || '',
             effectiveDate: new Date(parsed.data.effectiveDate),
             escalationProcess: parsed.data.escalationProcess,
             version: existingPolicy.version + 1
@@ -79,13 +79,13 @@ export async function POST(req: Request) {
       savedPolicy = await prisma.corporatePolicy.create({
         data: {
           title: parsed.data.title,
-          purpose: parsed.data.purpose,
-          scope: parsed.data.scope,
-          policyStatement: parsed.data.policyStatement,
-          responsibilities: parsed.data.responsibilities,
-          procedures: parsed.data.procedures,
-          complianceAndEnforcement: parsed.data.complianceAndEnforcement,
-          definitions: parsed.data.definitions,
+          purpose: parsed.data.purpose || '',
+          scope: parsed.data.scope || '',
+          policyStatement: parsed.data.policyStatement || '',
+          responsibilities: parsed.data.responsibilities || '',
+          procedures: parsed.data.procedures || '',
+          complianceAndEnforcement: parsed.data.complianceAndEnforcement || '',
+          definitions: parsed.data.definitions || '',
           effectiveDate: new Date(parsed.data.effectiveDate),
           escalationProcess: parsed.data.escalationProcess,
           version: 1

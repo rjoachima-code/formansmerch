@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import StoreSopViewer from '../../../components/StoreSopViewer';
 import { CheckSquare, ArrowRightCircle } from 'lucide-react';
