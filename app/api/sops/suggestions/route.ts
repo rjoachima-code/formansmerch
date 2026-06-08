@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../../lib/prisma';
-import { hasDepartmentAccess } from '../../../../lib/departmentAccess';
+import { prisma } from '@/lib/prisma';
+import { hasDepartmentAccess } from '@/lib/departmentAccess';
 
 type SuggestionPayload = {
   sopId?: string;

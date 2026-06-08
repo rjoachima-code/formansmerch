@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../../lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // Mock function for system notifications
 async function notifyRolesForAcknowledgment(policyId: string, version: number) {

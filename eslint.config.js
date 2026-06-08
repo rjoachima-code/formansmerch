@@ -2,6 +2,14 @@ import html from "eslint-plugin-html";
 
 export default [
     {
+        ignores: [
+            ".next/**",
+            "node_modules/**",
+            "out/**",
+            "dist/**",
+        ]
+    },
+    {
         files: ["**/*.html", "**/*.js"],
         plugins: { html },
         languageOptions: {
@@ -12,7 +20,7 @@ export default [
         },
         rules: {
             "no-undef": "error",
-            "no-unused-vars": ["error", { "varsIgnorePattern": "^(switchTab|populateSubAreas|submitAudit|logSOP|exportCSV|showOfflineModal|downloadApp|resetAppData)$" }]
+            "no-unused-vars": ["error", { "varsIgnorePattern": "^(nextConfig|switchTab|populateSubAreas|submitAudit|logSOP|exportCSV|showOfflineModal|downloadApp|resetAppData)$" }]
         }
     }
 ];

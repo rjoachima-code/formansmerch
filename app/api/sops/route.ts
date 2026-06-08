@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
-import { filterSopsByDepartmentAccess } from '../../../lib/departmentAccess';
+import { prisma } from '@/lib/prisma';
+import { filterSopsByDepartmentAccess } from '@/lib/departmentAccess';
 
 export async function GET(req: Request) {
   try {
