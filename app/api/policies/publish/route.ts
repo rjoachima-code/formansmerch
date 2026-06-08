@@ -49,17 +49,16 @@ export async function POST(req: Request) {
     let savedPolicy;
 
     if (existingPolicy) {
-      savedPolicy = await prisma.$transaction(async (tx: typeof prisma) => {
-        await tx.policyAudit.create({
+      const results = await prisma.$transaction([
+        prisma.policyAudit.create({
           data: {
             policyId: existingPolicy.id,
             version: existingPolicy.version,
             updatedBy: 'system-admin',
             archivedContent: JSON.parse(JSON.stringify(existingPolicy)),
           }
-        });
-
-        return tx.corporatePolicy.update({
+        }),
+        prisma.corporatePolicy.update({
           where: { id: existingPolicy.id },
           data: {
             purpose: parsed.data.purpose || '',
@@ -73,8 +72,9 @@ export async function POST(req: Request) {
             escalationProcess: parsed.data.escalationProcess,
             version: existingPolicy.version + 1
           }
-        });
-      });
+        }),
+      ]);
+      savedPolicy = results[1];
     } else {
       savedPolicy = await prisma.corporatePolicy.create({
         data: {
