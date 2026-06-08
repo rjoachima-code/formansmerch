@@ -52,10 +52,20 @@ export default function CreatePlanogramPage() {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      setImageFile(file)
-      setPreviewUrl(URL.createObjectURL(file))
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please select a valid image file.' })
+      setImageFile(null)
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
+      setPreviewUrl('')
+      return
     }
+
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    const objectUrl = URL.createObjectURL(file)
+    setImageFile(file)
+    setPreviewUrl(objectUrl)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -235,6 +245,8 @@ export default function CreatePlanogramPage() {
             </div>
           </div>
 
+  const safePreviewUrl = previewUrl.startsWith('blob:') ? previewUrl : ''
+
           <div>
             <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
               Reference Image
@@ -263,9 +275,9 @@ export default function CreatePlanogramPage() {
             >
               <Upload /> Select Reference Image
             </button>
-            {previewUrl && (
+            {safePreviewUrl && (
               <img
-                src={previewUrl}
+                src={safePreviewUrl}
                 alt="Preview"
                 style={{ marginTop: '1rem', maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
               />
