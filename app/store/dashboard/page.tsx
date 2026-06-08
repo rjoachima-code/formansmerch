@@ -1,8 +1,7 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
-import StoreSopViewer from '../../components/StoreSopViewer';
+import StoreSopViewer from '../../../components/StoreSopViewer';
 import { CheckSquare, ArrowRightCircle } from 'lucide-react';
+import styles from './Dashboard.module.css';
 
 interface Task {
   id: string;
@@ -34,63 +33,44 @@ export default function StoreManagerDashboard() {
   }, []);
 
   const handleToggleTask = (id: string) => {
-    // Optimistic UI update. In a real app, send a PUT/PATCH request to update the DB.
     setTasks(prev => prev.map(t => t.id === id ? { ...t, isCompleted: !t.isCompleted } : t));
   };
 
   const handleViewProcedure = (sopId: string) => {
     setFocusedSopId(sopId);
-    // Smooth scroll to the SOP viewer component if needed
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', fontFamily: 'system-ui, sans-serif' }}>
+    <div className={styles.container}>
       
-      {/* Daily Checklist Column */}
-      <section style={{ 
-        backgroundColor: '#f9fafb', 
-        padding: '1.5rem', 
-        borderRadius: '12px', 
-        boxShadow: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
-      }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: 0, borderBottom: '2px solid #e5e7eb', paddingBottom: '1rem' }}>
+      <section className={styles.checklistSection}>
+        <h2 className={styles.sectionTitle}>
           <CheckSquare size={28} color="#059669" />
           Manager's Daily Checklist
         </h2>
 
         {loading ? (
-          <p>Loading tasks...</p>
+          <p className={styles.loadingText}>Loading tasks...</p>
         ) : tasks.length === 0 ? (
-          <p style={{ color: '#6b7280' }}>No tasks assigned for today. Add some to the database.</p>
+          <p className={styles.emptyText}>No tasks assigned for today. Add some to the database.</p>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className={styles.taskList}>
             {tasks.map(task => (
-              <div 
-                key={task.id} 
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'space-between',
-                  backgroundColor: '#ffffff',
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                }}
-              >
+              <div key={task.id} className={styles.taskItem}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <input 
                     type="checkbox" 
                     checked={task.isCompleted} 
                     onChange={() => handleToggleTask(task.id)}
-                    style={{ width: '1.25rem', height: '1.25rem', cursor: 'pointer' }}
+                    className={styles.taskCheckbox}
                   />
                   <span style={{ 
                     fontSize: '1.1rem', 
                     fontWeight: '500',
                     color: task.isCompleted ? '#9ca3af' : '#1f2937',
                     textDecoration: task.isCompleted ? 'line-through' : 'none'
-                  }}>
+                  }} className={task.isCompleted ? styles.taskTitleCompleted : styles.taskTitle}>
                     {task.title}
                   </span>
                 </div>
@@ -98,20 +78,7 @@ export default function StoreManagerDashboard() {
                 {task.sopId && (
                   <button 
                     onClick={() => handleViewProcedure(task.sopId as string)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.5rem 0.75rem',
-                      backgroundColor: '#eff6ff',
-                      color: '#2563eb',
-                      border: '1px solid #bfdbfe',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      fontWeight: 'bold',
-                      fontSize: '0.9rem',
-                      transition: 'background-color 0.2s'
-                    }}
+                    className={styles.procedureButton}
                   >
                     View Procedure <ArrowRightCircle size={18} />
                   </button>
@@ -122,7 +89,6 @@ export default function StoreManagerDashboard() {
         )}
       </section>
 
-      {/* SOP Viewer Column */}
       <section>
         <StoreSopViewer 
           focusedSopId={focusedSopId} 

@@ -1,18 +1,23 @@
-import html from "eslint-plugin-html";
+import tseslint from "typescript-eslint";
 
-export default [
-    {
-        files: ["**/*.html", "**/*.js"],
-        plugins: { html },
-        languageOptions: {
-            globals: {
-                window: "readonly", document: "readonly", localStorage: "readonly", alert: "readonly", confirm: "readonly", console: "readonly", Date: "readonly", Object: "readonly", setInterval: "readonly", clearInterval: "readonly", Math: "readonly", parseInt: "readonly", setTimeout: "readonly", URL: "readonly", Blob: "readonly", tailwind: "writable",
-                switchTab: "readonly", populateSubAreas: "readonly", submitAudit: "readonly", logSOP: "readonly", exportCSV: "readonly", showOfflineModal: "readonly", downloadApp: "readonly", resetAppData: "readonly"
-            }
-        },
-        rules: {
-            "no-undef": "error",
-            "no-unused-vars": ["error", { "varsIgnorePattern": "^(switchTab|populateSubAreas|submitAudit|logSOP|exportCSV|showOfflineModal|downloadApp|resetAppData)$" }]
-        }
+export default tseslint.config(
+  ...tseslint.configs.recommended,
+  {
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "out/**",
+      "dist/**",
+      ".kilo/**"
+    ]
+  },
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: tseslint.parser
+    },
+    rules: {
+      "no-unused-vars": ["error", { "varsIgnorePattern": "^(nextConfig)$", "argsIgnorePattern": "^_" }]
     }
-];
+  }
+);

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../../lib/prisma';
+import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 
 export async function POST(req: Request) {
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       timestamp 
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error recording handbook acknowledgment:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(req: Request) {
   try {
@@ -20,7 +20,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ sections });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching handbook sections:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

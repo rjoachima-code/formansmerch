@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
-import { filterSopsByDepartmentAccess } from '../../../lib/departmentAccess';
+import { prisma } from '@/lib/prisma';
+import { filterSopsByDepartmentAccess } from '@/lib/departmentAccess';
 
 export async function GET(req: Request) {
   try {
@@ -52,8 +52,8 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ sops: authorizedSops });
-  } catch (error: any) {
-    console.error('Error fetching SOPs:', error);
+} catch (error: unknown) {
+    console.error('Error fetching tasks:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
