@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forman Mills Store #611 - Daily Operations & Training Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: '#f2f6fa',
+                            100: '#e1ecf5',
+                            500: '#0D233A',
+                            600: '#0a1b2d',
+                            700: '#071320',
+                        },
+                        crimson: {
+                            50: '#fdf2f2',
+                            100: '#fde8e8',
+                            500: '#D22630',
+                            600: '#b01e26',
+                            700: '#8e181e',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons for Retail Visuals -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for mobile lists */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0D233A;
+            border-radius: 3px;
+        }
+
+        /* Print architecture for binder-ready black & white output */
+        @media print {
+            @page {
+                size: auto;
+                margin: 10mm;
+            }
+
+            body {
+                background: #fff !important;
+                color: #000 !important;
+                padding-bottom: 0 !important;
+                font-size: 11px;
+            }
+
+            header,
+            footer,
+            #share-modal,
+            #toast-notification,
+            .print-hidden {
+                display: none !important;
+            }
+
+            main {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .bg-white, .bg-gray-50, .bg-navy-50, .bg-crimson-50, .bg-amber-50 {
+                background: #fff !important;
+            }
+
+            .text-white, .text-gray-400, .text-gray-500, .text-gray-600, .text-gray-700, .text-navy-500, .text-crimson-500 {
+                color: #000 !important;
+            }
+
+            .shadow-sm, .shadow-inner, .shadow-md, .shadow-lg, .shadow-2xl {
+                box-shadow: none !important;
+            }
+
+            .border, .border-gray-100, .border-gray-150, .border-gray-200, .border-gray-300, .border-navy-100, .border-crimson-100 {
+                border-color: #000 !important;
+            }
+
+            button {
+                display: none !important;
+            }
+
+            input, select, textarea {
+                border: 1px solid #000 !important;
+                background: #fff !important;
+                color: #000 !important;
+            }
+
+            #section-audit-run,
+            #section-daily-planner,
+            #section-training-academy,
+            #section-analytics-dashboard {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col pb-20">
+
+    <!-- TOP CORPORATE HEADER -->
+    <header class="bg-navy-500 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white p-1.5 rounded-md shadow-inner flex items-center justify-center">
+                    <span class="text-crimson-500 font-extrabold text-lg tracking-tighter">M <span class="text-navy-500">611</span></span>
+                </div>
+                <div>
+                    <h1 class="text-xs font-bold uppercase tracking-wider text-crimson-500">Store #611 Operations</h1>
+                    <p class="text-[10px] text-gray-300 font-medium font-mono">Daily Walk, Handover & Training</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="openShareModal()" class="bg-navy-600 hover:bg-navy-700 text-[11px] font-bold px-3 py-1.5 rounded-lg border border-navy-100 flex items-center space-x-1.5 transition-all">
+                    <i class="fa-solid fa-cloud-arrow-down text-crimson-500"></i>
+                    <span>Share & Install</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- METRICS & STATUS CARDS (STICKY SUMMARY) -->
+    <section class="bg-gradient-to-r from-navy-600 to-navy-500 text-white py-3 px-4 shadow-inner">
+        <div class="max-w-6xl mx-auto grid grid-cols-3 gap-2 text-center">
+            <div class="bg-white/10 rounded-lg p-2 backdrop-blur-sm">
+                <p class="text-[10px] uppercase text-gray-300 font-bold tracking-wider">Active Run Timer</p>
+                <p id="live-timer" class="text-sm font-mono font-extrabold text-yellow-400">00:00:00</p>
+            </div>
+            <div class="bg-white/10 rounded-lg p-2 backdrop-blur-sm">
+                <p class="text-[10px] uppercase text-gray-300 font-bold tracking-wider">Floor Merch FMI</p>
+                <p id="index-fmi" class="text-sm font-extrabold text-emerald-400">0.0%</p>
+            </div>
+            <div class="bg-white/10 rounded-lg p-2 backdrop-blur-sm">
+                <p class="text-[10px] uppercase text-gray-300 font-bold tracking-wider">Safety Score</p>
+                <p id="index-scs" class="text-sm font-extrabold text-red-400">0%</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN INTERACTIVE SPACE -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 space-y-4">
+
+        <!-- WORKSPACE SELECTION TABS -->
+        <div class="flex bg-white p-1 rounded-xl shadow-sm border border-gray-200">
+            <button onclick="switchTab('daily-planner')" id="tab-daily-planner" class="flex-1 py-2.5 text-center font-bold text-xs rounded-lg bg-navy-500 text-white transition-all duration-200">
+                <i class="fa-solid fa-calendar-day mr-1.5 text-sm"></i>Daily Planner
+            </button>
+            <button onclick="switchTab('audit-run')" id="tab-audit-run" class="flex-1 py-2.5 text-center font-bold text-xs rounded-lg text-gray-500 hover:text-navy-500 hover:bg-gray-100 transition-all duration-200">
+                <i class="fa-solid fa-clipboard-check mr-1.5 text-sm"></i>Walk Audit
+            </button>
+            <button onclick="switchTab('training-academy')" id="tab-training-academy" class="flex-1 py-2.5 text-center font-bold text-xs rounded-lg text-gray-500 hover:text-navy-500 hover:bg-gray-100 transition-all duration-200">
+                <i class="fa-solid fa-graduation-cap mr-1.5 text-sm"></i>SOP Training
+            </button>
+            <button onclick="switchTab('analytics-dashboard')" id="tab-analytics-dashboard" class="flex-1 py-2.5 text-center font-bold text-xs rounded-lg text-gray-500 hover:text-navy-500 hover:bg-gray-100 transition-all duration-200">
+                <i class="fa-solid fa-chart-line mr-1.5 text-sm"></i>Analytics
+            </button>
+        </div>
+
+        <!-- ================= TAB: DAILY PLANNERS ================= -->
+        <div id="section-daily-planner" class="space-y-4">
+            
+            <!-- PLAN CREATION CARD -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-4">
+                <div class="flex items-center space-x-2 border-b border-gray-100 pb-3">
+                    <div class="bg-crimson-500 text-white p-1.5 rounded-lg">
+                        <i class="fa-solid fa-calendar-plus text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-extrabold text-sm text-navy-500 uppercase tracking-wide">Daily Task & Accountability Planner</h2>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Set Shift Goals, Timeline Estimates, and Area Deliverables</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Name Dropdown -->
+                    <div>
+                        <label for="planner-manager" class="block text-xs font-bold text-gray-600 mb-1">Select Planning Manager <span class="text-crimson-500">*</span></label>
+                        <select id="planner-manager" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-xs font-semibold focus:ring-2 focus:ring-navy-500 focus:outline-none">
+                            <option value="">-- Choose Name --</option>
+                            <option value="Christopher Terry">Christopher Terry (Management Salary)</option>
+                            <option value="Shanetta McIntee">Shanetta McIntee (Asst Store Manager)</option>
+                            <option value="Joachima Ross">Joachima Ross (Mens Merchandise Manager)</option>
+                            <option value="Chanel Yancey">Chanel Yancey (Kids Merchandise Manager)</option>
+                            <option value="Alexis Hutchinson">Alexis Hutchinson (Home Merchandise Manager)</option>
+                            <option value="Angelique Hall">Angelique Hall (Front End Lead)</option>
+                        </select>
+                    </div>
+
+                    <!-- Target Area Dropdown -->
+                    <div>
+                        <label for="planner-area" class="block text-xs font-bold text-gray-600 mb-1">Target Area of Focus <span class="text-crimson-500">*</span></label>
+                        <select id="planner-area" onchange="updatePlannerSubareas()" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-xs font-semibold focus:ring-2 focus:ring-navy-500 focus:outline-none">
+                            <option value="">-- Select Area --</option>
+                            <option value="mens">1. Men's Apparel Pad</option>
+                            <option value="womens">2. Women's Apparel Pad</option>
+                            <option value="kids">3. Kids & Youth Pad</option>
+                            <option value="home">4. Home Goods & Toys</option>
+                            <option value="front">5. Customer Service & Front End</option>
+                            <option value="backroom">6. Backroom Logistics & Safety</option>
+                        </select>
+                    </div>
+
+                    <!-- Dynamic Sub-Area Dropdown -->
+                    <div>
+                        <label for="planner-subarea" class="block text-xs font-bold text-gray-600 mb-1">Target Sub-Area Pad <span class="text-crimson-500">*</span></label>
+                        <select id="planner-subarea" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-xs font-semibold focus:ring-2 focus:ring-navy-500 focus:outline-none">
+                            <option value="">-- Select Area First --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Plan details -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Strategic Ways to Upgrade Area Dropdown -->
+                    <div>
+                        <label for="planner-upgrade-type" class="block text-xs font-bold text-gray-600 mb-1">How are you upgrading your area today? <span class="text-crimson-500">*</span></label>
+                        <select id="planner-upgrade-type" onchange="toggleCustomUpgradeInput()" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-xs font-semibold focus:ring-2 focus:ring-navy-500 focus:outline-none">
+                            <option value="">-- Select Action Method --</option>
+                            <option value="Consolidating and sizing clearance runs (L-to-R)">Consolidating and sizing clearance runs (L-to-R)</option>
+                            <option value="Re-aligning bottoms / denim racks by waist & inseam sizes">Re-aligning bottoms / denim racks by waist & inseam sizes</option>
+                            <option value="Executing complete shelf Z-Lining and label facing">Executing complete shelf Z-Lining and label facing</option>
+                            <option value="EOD handovers, sweeping baseboards, and purging stray hangers">EOD handovers, sweeping baseboards, and purging stray hangers</option>
+                            <option value="Intimate / sleepwear sets interlocked on single hangers">Intimate / sleepwear sets interlocked on single hangers</option>
+                            <option value="Dock clearing and FIFO pallet logistics realignment">Dock clearing and FIFO pallet logistics realignment</option>
+                            <option value="Other">Other (Type custom action below)</option>
+                        </select>
+                    </div>
+
+                    <!-- Target Duration -->
+                    <div>
+                        <label for="planner-duration" class="block text-xs font-bold text-gray-600 mb-1">Time Allocated to Complete Task <span class="text-crimson-500">*</span></label>
+                        <select id="planner-duration" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-xs font-semibold focus:ring-2 focus:ring-navy-500 focus:outline-none">
+                            <option value="">-- Select Estimated Duration --</option>
+                            <option value="30 Minutes">30 Minutes (Rapid Reset)</option>
+                            <option value="1 Hour">1 Hour (Focused Session)</option>
+                            <option value="2 Hours">2 Hours (Standard Pad Reset)</option>
+                            <option value="4 Hours">4 Hours (Half-Shift Project)</option>
+                            <option value="All Day Shift">All Day Shift (Major Merchandising Transition)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Custom Action input (Dynamically shown on "Other" action) -->
+                <div id="planner-custom-upgrade-container" class="hidden">
+                    <label for="planner-custom-upgrade" class="block text-xs font-bold text-gray-600 mb-1">Specify Custom Action Method <span class="text-crimson-500">*</span></label>
+                    <input type="text" id="planner-custom-upgrade" placeholder="e.g., Setting up a secondary clearance rack run or seasonal visual adjustments" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-xs font-semibold focus:ring-2 focus:ring-navy-500 focus:outline-none">
+                </div>
+
+                <!-- Custom Task Details Box -->
+                <div>
+                    <label for="planner-desc" class="block text-xs font-bold text-gray-600 mb-1">What exactly are you doing in this area? (Be Specific) <span class="text-crimson-500">*</span></label>
+                    <textarea id="planner-desc" rows="3" placeholder="Explain the exact workload plans (e.g. recovering Girls 2T-6 pad, running Men's denim hanger sweeps, locking fragrance case keys, Z-lining Toys block, processing salvage comforters in Home)..." class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-xs font-semibold focus:ring-2 focus:ring-navy-500 focus:outline-none"></textarea>
+                </div>
+
+                <!-- Date Storage (Internal) -->
+                <input type="hidden" id="planner-date">
+
+                <div class="flex justify-end pt-2">
+                    <button onclick="logDailyPlan()" class="w-full sm:w-auto bg-crimson-500 hover:bg-crimson-600 text-white font-extrabold py-3 px-8 rounded-lg text-xs uppercase tracking-wider shadow transition-all flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Secure Shift Plan Goals</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ACTIVE SCHEDULES / EXECUTIVES ROADMAP -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-list-check text-navy-500 text-sm"></i>
+                        <h3 class="font-extrabold text-xs uppercase tracking-wider text-navy-500">Active Shift Handover Plans</h3>
+                    </div>
+                    <span class="text-[10px] bg-navy-50 text-navy-500 px-2.5 py-1 rounded font-bold font-mono">Christopher & Shanetta Dashboard</span>
+                </div>
+
+                <div id="active-plans-stack" class="space-y-3">
+                    <div class="text-center py-8 text-gray-400 font-semibold text-xs">
+                        <i class="fa-regular fa-calendar-minus text-2xl mb-2 block"></i>
+                        No active daily action plans have been logged for today.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= TAB: Walk Audit ================= -->
+        <div id="section-audit-run" class="hidden space-y-4">
+            
+            <!-- STEP 1: SHIFT CONFIGURATION -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center space-x-2 border-b border-gray-100 pb-3 mb-4">
+                    <span class="w-7 h-7 bg-navy-100 text-navy-500 rounded-full flex items-center justify-center font-extrabold text-sm">1</span>
+                    <h2 class="font-bold text-sm text-navy-500 uppercase tracking-wide">Shift Setup & Timing</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Opening manager dropdown -->
+                    <div>
+                        <label for="auditor-name" class="block text-xs font-bold text-gray-600 mb-1">Auditing Opening Manager <span class="text-crimson-500">*</span></label>
+                        <select id="auditor-name" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-navy-500 focus:outline-none font-semibold">
+                            <option value="">-- Select Manager on Duty --</option>
+                            <option value="Christopher Terry">Christopher Terry (Management Salary)</option>
+                            <option value="Shanetta McIntee">Shanetta McIntee (Asst Store Manager)</option>
+                            <option value="Joachima Ross">Joachima Ross (Mens Merchandise Manager)</option>
+                            <option value="Chanel Yancey">Chanel Yancey (Kids Merchandise Manager)</option>
+                            <option value="Alexis Hutchinson">Alexis Hutchinson (Home Merchandise Manager)</option>
+                            <option value="Angelique Hall">Angelique Hall (Front End Lead)</option>
+                        </select>
+                    </div>
+
+                    <!-- Shift timing dropdown -->
+                    <div>
+                        <label for="shift-hours" class="block text-xs font-bold text-gray-600 mb-1">Audited Shift Segment <span class="text-crimson-500">*</span></label>
+                        <select id="shift-hours" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-navy-500 focus:outline-none font-semibold">
+                            <option value="">-- Choose Shift Hour Window --</option>
+                            <option value="7-3">7:00 AM - 3:00 PM (Morning Open)</option>
+                            <option value="8-4">8:00 AM - 4:00 PM (Mid-Day)</option>
+                            <option value="9-5">9:00 AM - 5:00 PM (Mid-Day)</option>
+                            <option value="11-7">11:00 AM - 7:00 PM (Mid-Closing)</option>
+                            <option value="12-8">12:00 PM - 8:00 PM (Closing Handoff)</option>
+                            <option value="12-9">12:00 PM - 9:00 PM (Core Close)</option>
+                            <option value="12-10">12:00 PM - 10:00 PM (Extended Close)</option>
+                            <option value="OFF">Manager is OFF</option>
+                        </select>
+                    </div>
+
+                    <!-- Auto-generated date info -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">Audit Calendar Date</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                <i class="fa-solid fa-calendar-day text-sm"></i>
+                            </span>
+                            <input type="text" id="audit-date" readonly class="w-full bg-gray-100 border border-gray-300 rounded-lg py-2.5 pl-10 pr-3 text-sm text-gray-600 font-semibold focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Auto Timing Controls -->
+                    <div class="flex items-end">
+                        <button id="btn-timer-action" onclick="toggleWalkTimer()" class="w-full bg-crimson-500 hover:bg-crimson-600 text-white font-bold py-2.5 px-4 rounded-lg text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center space-x-2">
+                            <i id="timer-action-icon" class="fa-solid fa-play"></i>
+                            <span id="timer-action-text">Initialize Walk Audit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="timestamp-info-banner" class="hidden mt-4 bg-navy-50 rounded-lg p-3 border border-navy-100 text-xs text-navy-500 flex justify-between items-center font-mono">
+                    <div>
+                        <i class="fa-solid fa-clock-rotate-left mr-1"></i>
+                        <span>Start Time: <span id="display-start-time" class="font-bold">--:--:--</span></span>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-stopwatch mr-1 text-crimson-500"></i>
+                        <span>Elapsed Time: <span id="display-elapsed-duration" class="font-bold text-crimson-500">0m 0s</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: PRESENTATION COMPLIANCE CARDS -->
+            <div id="floor-audit-panel" class="hidden space-y-4">
+                
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-7 h-7 bg-navy-100 text-navy-500 rounded-full flex items-center justify-center font-extrabold text-sm">2</span>
+                            <h2 class="font-bold text-sm text-navy-500 uppercase tracking-wide">Merchandise & Recovery Audit</h2>
+                        </div>
+                        <button onclick="markAllPassed()" class="text-[10px] bg-emerald-50 hover:bg-emerald-100 font-extrabold text-emerald-700 py-1.5 px-3 rounded-md border border-emerald-200 transition-all">
+                            <i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i>Instant Pass All
+                        </button>
+                    </div>
+
+                    <p class="text-xs text-gray-500 mb-4 bg-amber-50 p-3 rounded-lg border border-amber-100">
+                        <i class="fa-solid fa-circle-exclamation text-amber-500 mr-2 text-sm"></i>
+                        <strong>Accelerated Compliance:</strong> Review the <strong>7 key items</strong> detailed within each department card below. Evaluate the overall area standard, select Pass/Fail, and score from 1-5.
+                    </p>
+
+                    <!-- DEPARTMENTAL DYNAMIC COMPLIANCE STACK -->
+                    <div class="space-y-4" id="department-grid-container">
+                        <!-- Dynamic categories populated cleanly by script -->
+                    </div>
+                </div>
+
+                <!-- STEP 3: ASSOCIATE ACCOUNTABILITY & TRAINING MATRIX -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-7 h-7 bg-navy-100 text-navy-500 rounded-full flex items-center justify-center font-extrabold text-sm">3</span>
+                            <h2 class="font-bold text-sm text-navy-500 uppercase tracking-wide">Associate Department & Sub-Area Ownership</h2>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Dynamic Pad Sections Deployment Hub -->
+                        <div class="space-y-4">
+                            <!-- MEN'S AREA DEPLOYMENTS -->
+                            <div class="border border-gray-200 rounded-xl p-3.5 bg-gray-50/50">
+                                <div class="flex justify-between items-center mb-2.5">
+                                    <span class="text-xs font-extrabold text-navy-500 uppercase tracking-wider flex items-center">
+                                        <i class="fa-solid fa-person mr-1.5 text-crimson-500 text-sm"></i>Men's Apparel Department
+                                    </span>
+                                    <button onclick="addAssociateRow('mens')" class="bg-navy-500 hover:bg-navy-600 text-white text-[10px] font-bold py-1 px-2.5 rounded-lg flex items-center space-x-1 transition-all">
+                                        <i class="fa-solid fa-plus text-[9px]"></i><span>Assign Pad Owner</span>
+                                    </button>
+                                </div>
+                                <div id="deployment-container-mens" class="space-y-4">
+                                    <!-- Dynamic rows append here -->
+                                </div>
+                            </div>
+
+                            <!-- WOMEN'S AREA DEPLOYMENTS -->
+                            <div class="border border-gray-200 rounded-xl p-3.5 bg-gray-50/50">
+                                <div class="flex justify-between items-center mb-2.5">
+                                    <span class="text-xs font-extrabold text-navy-500 uppercase tracking-wider flex items-center">
+                                        <i class="fa-solid fa-person-dress mr-1.5 text-crimson-500 text-sm"></i>Women's Apparel Department
+                                    </span>
+                                    <button onclick="addAssociateRow('womens')" class="bg-navy-500 hover:bg-navy-600 text-white text-[10px] font-bold py-1 px-2.5 rounded-lg flex items-center space-x-1 transition-all">
+                                        <i class="fa-solid fa-plus text-[9px]"></i><span>Assign Pad Owner</span>
+                                    </button>
+                                </div>
+                                <div id="deployment-container-womens" class="space-y-4">
+                                    <!-- Dynamic rows append here -->
+                                </div>
+                            </div>
+
+                            <!-- KIDS AREA DEPLOYMENTS -->
+                            <div class="border border-gray-200 rounded-xl p-3.5 bg-gray-50/50">
+                                <div class="flex justify-between items-center mb-2.5">
+                                    <span class="text-xs font-extrabold text-navy-500 uppercase tracking-wider flex items-center">
+                                        <i class="fa-solid fa-child-reaching mr-1.5 text-crimson-500 text-sm"></i>Kids, Infants & Shoes
+                                    </span>
+                                    <button onclick="addAssociateRow('kids')" class="bg-navy-500 hover:bg-navy-600 text-white text-[10px] font-bold py-1 px-2.5 rounded-lg flex items-center space-x-1 transition-all">
+                                        <i class="fa-solid fa-plus text-[9px]"></i><span>Assign Pad Owner</span>
+                                    </button>
+                                </div>
+                                <div id="deployment-container-kids" class="space-y-4">
+                                    <!-- Dynamic rows append here -->
+                                </div>
+                            </div>
+
+                            <!-- HOME AREA DEPLOYMENTS -->
+                            <div class="border border-gray-200 rounded-xl p-3.5 bg-gray-50/50">
+                                <div class="flex justify-between items-center mb-2.5">
+                                    <span class="text-xs font-extrabold text-navy-500 uppercase tracking-wider flex items-center">
+                                        <i class="fa-solid fa-house-chimney mr-1.5 text-crimson-500 text-sm"></i>Home Goods & Toys
+                                    </span>
+                                    <button onclick="addAssociateRow('home')" class="bg-navy-500 hover:bg-navy-600 text-white text-[10px] font-bold py-1 px-2.5 rounded-lg flex items-center space-x-1 transition-all">
+                                        <i class="fa-solid fa-plus text-[9px]"></i><span>Assign Pad Owner</span>
+                                    </button>
+                                </div>
+                                <div id="deployment-container-home" class="space-y-4">
+                                    <!-- Dynamic rows append here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Training Gaps Matrix -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wider">Identified Frontline Training Gaps</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-medium">
+                                <label class="flex items-center space-x-2 bg-gray-50 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="gap-sizing" class="rounded text-navy-500 focus:ring-navy-500">
+                                    <span>Hanger Sizing Array Doctrines (L to R)</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-gray-50 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="gap-zlining" class="rounded text-navy-500 focus:ring-navy-500">
+                                    <span>Shelf "Z-Lining" & Front-Facing Laws</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-gray-50 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="gap-hanger" class="rounded text-navy-500 focus:ring-navy-500">
+                                    <span>Hanger Purging & Hook Question-Mark Facing</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-gray-50 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="gap-sets" class="rounded text-navy-500 focus:ring-navy-500">
+                                    <span>2-Piece Coordinate Set Hanger Interlocking</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-gray-50 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="gap-speed" class="rounded text-navy-500 focus:ring-navy-500">
+                                    <span>Rack Running Urgency & Focus (First 2 Hours)</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-gray-50 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="gap-discipline" class="rounded text-navy-500 focus:ring-navy-500">
+                                    <span>Department Layout Discipline (No Alterations)</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-gray-50 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="gap-dock" class="rounded text-navy-500 focus:ring-navy-500">
+                                    <span>Dock Door & Dock Plate Safety Operating Protocols</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-gray-50 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="gap-showcase" class="rounded text-navy-500 focus:ring-navy-500">
+                                    <span>Perfume Showcase Handoff and Key Control Security</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4: ASSOCIATE ESCALATION PORTAL -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div class="flex items-center space-x-2 border-b border-gray-100 pb-3 mb-4">
+                        <span class="w-7 h-7 bg-navy-100 text-navy-500 rounded-full flex items-center justify-center font-extrabold text-sm">4</span>
+                        <h2 class="font-bold text-sm text-navy-500 uppercase tracking-wide">Associate Escalation Portal</h2>
+                    </div>
+                    
+                    <p class="text-[11px] text-gray-500 mb-3 font-bold uppercase tracking-wider">Frontline Shift Impediment Log</p>
+                    <div class="space-y-3">
+                        <textarea id="escalation-notes" rows="3" placeholder="Record feedback from sales associates (e.g. broken hang bars, sensor tag shortages, register issues, broken display pegs, backroom cart blocks)..." class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-xs focus:ring-2 focus:ring-navy-500 focus:outline-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- STEP 5: EXECUTIVE WALK SIGN-OFF -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div class="flex items-center space-x-2 border-b border-gray-100 pb-3 mb-4">
+                        <span class="w-7 h-7 bg-navy-100 text-navy-500 rounded-full flex items-center justify-center font-extrabold text-sm">5</span>
+                        <h2 class="font-bold text-sm text-navy-500 uppercase tracking-wide">Walk Sign-Off & Execution</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="executive-notes" class="block text-xs font-bold text-gray-600 mb-1">Executive Walkthrough & Operations Notes</label>
+                            <textarea id="executive-notes" rows="4" placeholder="Log storewide observations, floor layout updates, or positive associate highlights noticed during the floor walk..." class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-xs focus:ring-2 focus:ring-navy-500 focus:outline-none"></textarea>
+                        </div>
+
+                        <!-- DIGITAL SIGNATURE COMPONENT -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="manager-signature" class="block text-xs font-bold text-gray-600 mb-1">Electronic Signature (Type Name)</label>
+                                <input type="text" id="manager-signature" placeholder="Signature of Verifying Manager" class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-xs focus:ring-2 focus:ring-navy-500 focus:outline-none font-mono">
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="submitDailyAudit()" class="w-full bg-navy-500 hover:bg-navy-600 text-white font-extrabold py-3 px-4 rounded-lg text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-file-arrow-up"></i>
+                                    <span>Log Compliance Audit Report</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= TAB: TRAINING ACADEMY ================= -->
+        <div id="section-training-academy" class="hidden space-y-4">
+            
+            <!-- ACADEMY HERO HEADER -->
+            <div class="bg-gradient-to-r from-navy-600 to-navy-700 text-white rounded-2xl p-5 shadow-sm space-y-2">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-crimson-500 text-white p-2 rounded-xl">
+                        <i class="fa-solid fa-graduation-cap text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-extrabold text-base uppercase tracking-wide">SOP Training & Development Hub</h2>
+                        <p class="text-xs text-gray-300">Empowering Store #611 associates with clear, actionable retail standards to thrive.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DIGITAL TRAINING LOG ENTRY FORM -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center space-x-2 border-b border-gray-100 pb-3 mb-4">
+                    <i class="fa-solid fa-user-pen text-crimson-500 text-base"></i>
+                    <h3 class="font-extrabold text-xs uppercase tracking-wider text-navy-500">Log Associate Coaching Session</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Select Trained Associate</label>
+                        <select id="train-assoc-select" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-xs font-semibold focus:ring-1 focus:ring-navy-500 focus:outline-none"></select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Select Training Subject</label>
+                        <select id="train-subject-select" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-xs font-semibold focus:ring-1 focus:ring-navy-500 focus:outline-none font-semibold">
+                            <option value="Men's Apparel Standard SOP">Men's Apparel Standard SOP</option>
+                            <option value="Women's Apparel Standard SOP">Women's Apparel Standard SOP</option>
+                            <option value="Kids & Youth Merchandising Standard SOP">Kids & Youth Merchandising Standard SOP</option>
+                            <option value="Home Goods & Toys Layout Standard SOP">Home Goods & Toys Layout Standard SOP</option>
+                            <option value="Front End Service & Showcase Security SOP">Front End Showcase Security SOP</option>
+                            <option value="Backroom Logistics, Dock Doors & Plates SOP">Backroom Logistics, Dock Doors & Plates SOP</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="logTrainingSession()" class="w-full bg-navy-500 hover:bg-navy-600 text-white font-extrabold py-2.5 px-4 rounded-lg text-xs uppercase tracking-wider shadow transition-all flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-address-book"></i>
+                            <span>Save Coaching Log</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE EXPANDED MODULAR CARDS -->
+            <div class="space-y-4">
+                <!-- MODULE 1: MENS APPAREL PAD -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 p-4 border-b border-gray-150 flex justify-between items-center">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="text-navy-500 font-extrabold text-base"><i class="fa-solid fa-person"></i></span>
+                            <div>
+                                <h4 class="font-extrabold text-sm text-navy-500 uppercase">Men's Apparel Merchandising & Sizing SOP</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Men's Department Training</p>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">SOP-611-MENS</span>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <h5 class="text-xs font-extrabold text-navy-500 uppercase border-b border-gray-100 pb-1.5">Floor Presentation Expectations</h5>
+                            <p class="text-xs text-gray-600 leading-relaxed font-medium">
+                                The Men's Department is a high-velocity pad. Associates assigned to Men's are pad owners and must keep it presentation-ready.
+                            </p>
+                            <div class="bg-navy-50 border border-navy-100 rounded-lg p-3 text-xs text-navy-600 space-y-1">
+                                <span class="font-extrabold text-navy-500 block uppercase">Critical Sizing Laws:</span>
+                                <ul class="list-disc pl-4 space-y-1 text-[11px] font-medium leading-relaxed">
+                                    <li><strong>Denim Bottoms</strong>: Sorted left-to-right (Smallest waist 28 up to 44). Rigid plastic disk dividers must separate waist sizes.</li>
+                                    <li><strong>Clearance Zone</strong>: Must be completely size-sequenced. Purge empty hangers routinely to prevent clutter.</li>
+                                    <li><strong>Hosiery</strong>: Peg blocks must have package labels faced perfectly. Pick up trash and loose items daily.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-crimson-50 border border-crimson-100 rounded-xl p-4 space-y-3">
+                            <h5 class="text-xs font-extrabold text-crimson-600 uppercase border-b border-crimson-100 pb-1.5">Coaching Points & Warnings</h5>
+                            <div class="space-y-2">
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Spend first 2 hours running racks. Maintain layout strictly based on Merchandise Manager decisions.</p>
+                                </div>
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Big Men's department runs must have oversized visual tags to avoid mixing.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODULE 2: WOMENS APPAREL PAD -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 p-4 border-b border-gray-150 flex justify-between items-center">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="text-navy-500 font-extrabold text-base"><i class="fa-solid fa-person-dress"></i></span>
+                            <div>
+                                <h4 class="font-extrabold text-sm text-navy-500 uppercase">Women's Merchandising, Brand & Sleepwear SOP</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Women's Department Training</p>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">SOP-611-WOMENS</span>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <h5 class="text-xs font-extrabold text-navy-500 uppercase border-b border-gray-100 pb-1.5">Hanger Presentation & Brand Segregation</h5>
+                            <p class="text-xs text-gray-600 leading-relaxed font-medium">
+                                The Women's pad relies on style coordination, brand separation, and clean brand blocks. Hangers must look professional.
+                            </p>
+                            <div class="bg-navy-50 border border-navy-100 rounded-lg p-3 text-xs text-navy-600 space-y-1">
+                                <span class="font-extrabold text-navy-500 block uppercase">Critical Presentation Guidelines:</span>
+                                <ul class="list-disc pl-4 space-y-1 text-[11px] font-medium leading-relaxed">
+                                    <li><strong>The Question-Mark Rule</strong>: Verify 100% of hanger hooks pointing to the left (forming a "?" shape).</li>
+                                    <li><strong>Sleepwear & Lingerie</strong>: Ensure 2-piece coordinates are locked together on a single hanger to prevent mismatched sets.</li>
+                                    <li><strong>Scrubs Pad</strong>: Must be grouped strictly by solid uniform color stories. Sizes must flow smoothly.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-crimson-50 border border-crimson-100 rounded-xl p-4 space-y-3">
+                            <h5 class="text-xs font-extrabold text-crimson-600 uppercase border-b border-crimson-100 pb-1.5">Coaching Points & Warnings</h5>
+                            <div class="space-y-2">
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Do not allow JR brand lines to overlap Missy sizes. Maintain clear section barriers.</p>
+                                </div>
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Check under bottom display base decks hourly. Sweep up fallen tickets, tags, and hangers.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODULE 3: KIDS & YOUTH PAD -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 p-4 border-b border-gray-150 flex justify-between items-center">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="text-navy-500 font-extrabold text-base"><i class="fa-solid fa-child-reaching"></i></span>
+                            <div>
+                                <h4 class="font-extrabold text-sm text-navy-500 uppercase">Kids, Youth Growth & Footwear Layout SOP</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Kids Department Training</p>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">SOP-611-KIDS</span>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <h5 class="text-xs font-extrabold text-navy-500 uppercase border-b border-gray-100 pb-1.5">Growth Bracket Boundaries & Shoe Facings</h5>
+                            <p class="text-xs text-gray-600 leading-relaxed font-medium">
+                                The Kids department must remain strictly separated by age/size classifications. Muddled size runs can create visual friction for families.
+                            </p>
+                            <div class="bg-navy-50 border border-navy-100 rounded-lg p-3 text-xs text-navy-600 space-y-1">
+                                <span class="font-extrabold text-navy-500 block uppercase">Critical Kids Rules:</span>
+                                <ul class="list-disc pl-4 space-y-1 text-[11px] font-medium leading-relaxed">
+                                    <li><strong>Growth Segment Boundaries</strong>: Maintain strict separation between Boys 8-20/4-7 and Girls 7-16/2T-6 pad segments.</li>
+                                    <li><strong>Toddlers & Infants</strong>: Ensure matching toddler coordinate sets are securely matched/clipped. Sized run dividers must be updated.</li>
+                                    <li><strong>Shoe Grid Box Facings</strong>: Stack box inventories symmetrically with product sizing labels facing outward.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-crimson-50 border border-crimson-100 rounded-xl p-4 space-y-3">
+                            <h5 class="text-xs font-extrabold text-crimson-600 uppercase border-b border-crimson-100 pb-1.5">Coaching Points & Warnings</h5>
+                            <div class="space-y-2">
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Instruct associates to run racks to their assigned location without altering general department layouts.</p>
+                                </div>
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Kids clearance pad must be sorted left-to-right strictly by size brackets.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODULE 4: HOME GOODS & TOYS -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 p-4 border-b border-gray-150 flex justify-between items-center">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="text-navy-500 font-extrabold text-base"><i class="fa-solid fa-house-chimney"></i></span>
+                            <div>
+                                <h4 class="font-extrabold text-sm text-navy-500 uppercase">Home Goods, Toys & Bedding Layout SOP</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Home Goods Department Training</p>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">SOP-611-HOME</span>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <h5 class="text-xs font-extrabold text-navy-500 uppercase border-b border-gray-100 pb-1.5">Shelf Edge facing & Stack safety</h5>
+                            <p class="text-xs text-gray-600 leading-relaxed font-medium">
+                                Hardlines present unique merchandising challenges. An un-faced shelf looks empty and unappealing. 100% execution of Z-lining is standard across all displays.
+                            </p>
+                            <div class="bg-navy-50 border border-navy-100 rounded-lg p-3 text-xs text-navy-600 space-y-1">
+                                <span class="font-extrabold text-navy-500 block uppercase">Critical Hardlines Rules:</span>
+                                <ul class="list-disc pl-4 space-y-1 text-[11px] font-medium leading-relaxed">
+                                    <li><strong>The Z-Lining Standard</strong>: Always pull inventory forward so it sits flush to the absolute front edge of the shelves.</li>
+                                    <li><strong>Box & Product Label Facing</strong>: Turn 100% of product packages, boxes, and towels with their front brand tags directly facing the customer.</li>
+                                    <li><strong>Oversized/Heavy Toys Safety</strong>: Stack large boxes squarely on bottom decks. Never leave heavy items on top shelves where they could fall.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-crimson-50 border border-crimson-100 rounded-xl p-4 space-y-3">
+                            <h5 class="text-xs font-extrabold text-crimson-600 uppercase border-b border-crimson-100 pb-1.5">Coaching Points & Warnings</h5>
+                            <div class="space-y-2">
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Organize towels, sheets, and pillows strictly by visual design stories and color continuity blocks.</p>
+                                </div>
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Clear out stray toys, apparel, or empty boxes from home aisles routinely to maintain a safe walkthrough.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODULE 5: FRONT END SHOWCASE -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 p-4 border-b border-gray-150 flex justify-between items-center">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="text-navy-500 font-extrabold text-base"><i class="fa-solid fa-cash-register"></i></span>
+                            <div>
+                                <h4 class="font-extrabold text-sm text-navy-500 uppercase">Front End, Showcase Security & Q-Line SOP</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Front End Training</p>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">SOP-611-FRONT</span>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <h5 class="text-xs font-extrabold text-navy-500 uppercase border-b border-gray-100 pb-3">Security controls & cashwrap standards</h5>
+                            <p class="text-xs text-gray-600 leading-relaxed font-medium">
+                                The front end is our final point of customer interaction and our primary line of defense against high-shrink items. Security controls and neat presentation are mandatory.
+                            </p>
+                            <div class="bg-navy-50 border border-navy-100 rounded-lg p-3 text-xs text-navy-600 space-y-1">
+                                <span class="font-extrabold text-navy-500 block uppercase">Critical Front End Rules:</span>
+                                <ul class="list-disc pl-4 space-y-1 text-[11px] font-medium leading-relaxed">
+                                    <li><strong>Showcase Security</strong>: Keep luxury perfume and cologne tables fully secured. Glass cases must remain locked. The key group must stay physically attached to the manager's belt.</li>
+                                    <li><strong>Q-Line Impulse Density</strong>: Impulse lane racks must be kept stocked, faced, and neatly aligned to encourage impulse buys. Enforce strict FIFO snacks rotation.</li>
+                                    <li><strong>Return Baskets</strong>: Empty behind-the-counter return baskets hourly. Sort them into department bins so teams can return items to active rods.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-crimson-50 border border-crimson-100 rounded-xl p-4 space-y-3">
+                            <h5 class="text-xs font-extrabold text-crimson-600 uppercase border-b border-crimson-100 pb-1.5">Coaching Points & Warnings</h5>
+                            <div class="space-y-2">
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Verify cashwrap counters are completely clear of trash, loose cardboard, and hangers. Keep registers pristine.</p>
+                                </div>
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Do not allow handwritten value signs on cash wrap tables. Use only corporate promotional signage templates.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODULE 6: BACKROOM LOGISTICS & SAFETY -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 p-4 border-b border-gray-150 flex justify-between items-center">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="text-navy-500 font-extrabold text-base"><i class="fa-solid fa-truck-ramp-box"></i></span>
+                            <div>
+                                <h4 class="font-extrabold text-sm text-navy-500 uppercase">Backroom Logistics, Dock Doors & Plates Safety SOP</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Logistics & Safety Department Training</p>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">SOP-611-LOGISTICS</span>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <h5 class="text-xs font-extrabold text-navy-500 uppercase border-b border-gray-100 pb-3">Dock safety & warehouse securement laws</h5>
+                            <p class="text-xs text-gray-600 leading-relaxed font-medium">
+                                The backroom is a high-risk logistics center. Orderliness, proper egress pathways, and proper handling of mechanical dock plates are mandatory to prevent injury.
+                            </p>
+                            <div class="bg-navy-50 border border-navy-100 rounded-lg p-3 text-xs text-navy-600 space-y-1">
+                                <span class="font-extrabold text-navy-500 block uppercase">Critical Safety Rules:</span>
+                                <ul class="list-disc pl-4 space-y-1 text-[11px] font-medium leading-relaxed">
+                                    <li><strong>The 36-Inch Rule</strong>: Maintain a strict 36-inch clearance around all emergency fire doors, electrical panels, and fire extinguishers. Keep exit routes completely clear.</li>
+                                    <li><strong>Dock Plate Operation</strong>: Only certified trained personnel may operate the leveler or mechanical dock plates. Leverage bars must be stored in their correct safety brackets.</li>
+                                    <li><strong>Dock Door Securement</strong>: Keep rolling dock doors completely closed and locked/latched when no active shipping trailer is backed in.</li>
+                                    <li><strong>Pallet Stacking Limits</strong>: Wood pallets must be stacked flat, squared, and capped at a maximum safety ceiling of 12 pallets high.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-crimson-50 border border-crimson-100 rounded-xl p-4 space-y-3">
+                            <h5 class="text-xs font-extrabold text-crimson-600 uppercase border-b border-crimson-100 pb-1.5">Coaching Points & Warnings</h5>
+                            <div class="space-y-2">
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Never process salvage items or freight in a way that blocks fire door exit routes or dock plate steps.</p>
+                                </div>
+                                <div class="flex items-start space-x-2.5 text-xs">
+                                    <i class="fa-solid fa-circle-exclamation text-crimson-500 mt-0.5"></i>
+                                    <p class="text-gray-600 font-semibold">Incoming cargo pallets must be processed strictly using first-in, first-out (FIFO) logistics sequence based on arrival dates.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= TAB: ANALYTICS & HISTORY ================= -->
+        <div id="section-analytics-dashboard" class="hidden space-y-4">
+            
+            <!-- MASTER CONTROLS / CSV EXPORTER -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h3 class="font-bold text-sm text-navy-500 uppercase tracking-wide">Historical Compliance Log</h3>
+                    <p class="text-xs text-gray-500">Stored operations records completed by Store #611 management team.</p>
+                </div>
+                <div class="flex space-x-2 w-full sm:w-auto">
+                    <button onclick="exportAuditMasterToCSV()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-4 rounded-lg flex items-center justify-center space-x-1.5 transition-all">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Export CSV Log</span>
+                    </button>
+                    <button onclick="clearAuditHistory()" class="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 text-red-600 text-xs font-bold py-2 px-4 rounded-lg flex items-center justify-center space-x-1.5 border border-gray-200 transition-all">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>Purge History</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ANALYTICS CARDS -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Total Walks Logged</p>
+                    <p id="total-walks-stat" class="text-2xl font-extrabold text-navy-500 mt-1">0</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Average FMI Score</p>
+                    <p id="avg-fmi-stat" class="text-2xl font-extrabold text-emerald-600 mt-1">0.0%</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Safety Violations</p>
+                    <p id="safety-warnings-stat" class="text-2xl font-extrabold text-red-500 mt-1">0</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Training Logs</p>
+                    <p id="training-count-stat" class="text-2xl font-extrabold text-yellow-600 mt-1">0</p>
+                </div>
+            </div>
+
+            <!-- COMPLETED COACHING LOG TABLE -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-3">
+                <h4 class="font-extrabold text-xs uppercase tracking-wider text-navy-500">Completed Coaching & Training Log</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-500">
+                        <thead class="bg-gray-100 text-gray-700 uppercase font-bold text-[9px] tracking-wider">
+                            <tr>
+                                <th class="py-2.5 px-3">Date</th>
+                                <th class="py-2.5 px-3">Associate</th>
+                                <th class="py-2.5 px-3">Training Module Subject</th>
+                                <th class="py-2.5 px-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coaching-history-rows" class="divide-y divide-gray-100 font-medium">
+                            <tr>
+                                <td colspan="4" class="py-4 text-center text-gray-400 font-semibold text-[11px]">No logged coaching session records found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- HISTORY TABLE -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-500">
+                        <thead class="bg-gray-100 text-gray-700 uppercase font-bold text-[10px] tracking-wider">
+                            <tr>
+                                <th class="py-3 px-4">Date/Time</th>
+                                <th class="py-3 px-4">Auditor</th>
+                                <th class="py-3 px-4">Shift</th>
+                                <th class="py-3 px-4 text-center">FMI Index</th>
+                                <th class="py-3 px-4 text-center">Safety Score</th>
+                                <th class="py-3 px-4">Duration</th>
+                                <th class="py-3 px-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-rows" class="divide-y divide-gray-100 font-medium">
+                            <tr>
+                                <td colspan="7" class="py-8 text-center text-gray-400 font-medium">
+                                    <i class="fa-solid fa-folder-open text-2xl mb-2 block"></i>
+                                    No completed compliance audits found in database.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- TEST & SHARE DIALOG POPUP MODAL -->
+    <div id="share-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 border border-gray-100 transform scale-95 transition-all duration-300">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-2.5">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-share-nodes text-crimson-500 text-lg"></i>
+                    <h3 class="font-extrabold text-sm text-navy-500 uppercase tracking-wide">Test & Share Suite</h3>
+                </div>
+                <button onclick="closeShareModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div class="space-y-3.5">
+                <p class="text-xs text-gray-600 font-semibold leading-relaxed">
+                    Since you are previewing this in an isolated developer sandbox, web links will not open on your store GM's or ASM's personal phones.
+                </p>
+
+                <!-- Offline download mechanism -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 text-center space-y-2.5">
+                    <h4 class="font-extrabold text-xs text-emerald-800 uppercase tracking-wider flex items-center justify-center">
+                        <i class="fa-solid fa-circle-down mr-1.5 text-sm"></i>Share via Email or Text File
+                    </h4>
+                    <p class="text-[11px] text-emerald-700 font-semibold">
+                        This button generates and exports the entire web app as a single standalone offline file. Download it and send it to Christopher & Shanetta!
+                    </p>
+                    <button onclick="exportHTMLFile()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 px-4 rounded-lg flex items-center justify-center space-x-2 shadow transition-all">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                        <span>Download Offline App File</span>
+                    </button>
+                </div>
+
+                <!-- Phone Home Screen guidelines -->
+                <div class="bg-navy-50 border border-navy-100 rounded-xl p-3 text-xs text-navy-600 space-y-2">
+                    <h4 class="font-extrabold text-[11px] uppercase tracking-wider text-navy-500 flex items-center">
+                        <i class="fa-solid fa-mobile-screen-button mr-1.5"></i>How they can use the file:
+                    </h4>
+                    <ol class="list-decimal pl-4 space-y-1 text-[11px] font-medium leading-relaxed">
+                        <li>Send them the downloaded <strong class="text-crimson-500">.html</strong> file via Email, Text, or Slack.</li>
+                        <li>They tap the file on their phone to open it instantly in Safari/Chrome.</li>
+                        <li>Tap the browser share icon and choose <strong class="text-navy-500">"Add to Home Screen"</strong>.</li>
+                        <li>It creates a store app icon they can tap to walk the floor daily!</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="pt-1">
+                <button onclick="closeShareModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-wide transition-all border border-gray-200">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLOATING FOOTER NAVIGATION FOR SMARTPHONES -->
+    <footer class="bg-white border-t border-gray-200 py-2 fixed bottom-0 left-0 right-0 z-40 shadow-lg">
+        <div class="max-w-6xl mx-auto px-4 flex justify-around text-center text-xs font-bold text-gray-500">
+            <button onclick="switchTab('daily-planner')" class="flex flex-col items-center hover:text-navy-500" id="nav-btn-daily-planner">
+                <i class="fa-solid fa-calendar-day text-lg text-navy-500 animate-pulse" id="nav-icon-daily-planner"></i>
+                <span class="text-[10px] mt-0.5 text-navy-500" id="nav-lbl-daily-planner">Planner</span>
+            </button>
+            <button onclick="switchTab('audit-run')" class="flex flex-col items-center hover:text-navy-500" id="nav-btn-audit-run">
+                <i class="fa-solid fa-clipboard-check text-lg text-gray-400" id="nav-icon-audit-run"></i>
+                <span class="text-[10px] mt-0.5 text-gray-400" id="nav-lbl-audit-run">Walk Audit</span>
+            </button>
+            <button onclick="switchTab('training-academy')" class="flex flex-col items-center hover:text-navy-500" id="nav-btn-training">
+                <i class="fa-solid fa-graduation-cap text-lg text-gray-400" id="nav-icon-training"></i>
+                <span class="text-[10px] mt-0.5 text-gray-400" id="nav-lbl-training">Training SOP</span>
+            </button>
+            <button onclick="switchTab('analytics-dashboard')" class="flex flex-col items-center hover:text-navy-500" id="nav-btn-analytics">
+                <i class="fa-solid fa-chart-line text-lg text-gray-400" id="nav-icon-analytics"></i>
+                <span class="text-[10px] mt-0.5 text-gray-400 font-medium" id="nav-lbl-analytics">Analytics</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE FLOATING POPUP NOTIFICATIONS -->
+    <div id="toast-notification" class="hidden fixed bottom-20 right-4 left-4 sm:left-auto sm:max-w-sm bg-navy-500 text-white rounded-xl shadow-2xl p-4 border border-navy-100 z-50 transition-all duration-300">
+        <div class="flex items-start space-x-3">
+            <div id="toast-icon-wrapper" class="bg-white/20 p-1.5 rounded-lg">
+                <i id="toast-icon" class="fa-solid fa-circle-check text-white"></i>
+            </div>
+            <div class="flex-1">
+                <h4 id="toast-title" class="text-xs font-bold uppercase tracking-wide">System Update</h4>
+                <p id="toast-message" class="text-[11px] text-gray-200 mt-0.5 font-medium"></p>
+            </div>
+            <button onclick="closeToast()" class="text-gray-300 hover:text-white text-sm">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN OPERATIONS CLIENT-SIDE ENGINE -->
+    <script>
+        // System variables & State Management
+        let walkActive = false;
+        let walkStartTime = null;
+        let walkTimerInterval = null;
+        let activeTab = 'daily-planner'; // Default to Daily Planner tab
+        
+        // Exact master associate directory roster data mapped from database
+        const masterAssociates = [
+            { name: "-- Select Associate --", role: "" },
+            { name: "Itoya Brown", role: "Fitting Room / Home" },
+            { name: "Gayla Harrison", role: "Front End" },
+            { name: "Lisa Clark", role: "Front End" },
+            { name: "Jada Jenkins", role: "Ladies" },
+            { name: "Jordan Milford", role: "Back End" },
+            { name: "Alecia Mance", role: "Front End" },
+            { name: "Brejanae Butler", role: "Front End" },
+            { name: "Denise Johnson", role: "Front End" },
+            { name: "Parrish Kimbrough", role: "Mens" },
+            { name: "Juel Fields", role: "Door Greeter" },
+            { name: "Donovan Palmer", role: "Boys" },
+            { name: "Javaughn Harris", role: "Boys" },
+            { name: "Josephine Henning", role: "Maintenance" },
+            { name: "Taylor Davis", role: "Loss Prevention" },
+            { name: "Maxine Horton", role: "Ladies" },
+            { name: "Devante Williams", role: "Back End" },
+            { name: "Robert Brown", role: "Back End" },
+            { name: "Seantwa Foster", role: "Back End" },
+            { name: "Nakya Fletcher", role: "Front End" },
+            { name: "Angelique Dunn", role: "Mens" },
+            { name: "Xevier Kelley", role: "Door Greeter" },
+            { name: "Christian Ross", role: "Home" },
+            { name: "Clifford Marshall", role: "Home" },
+            { name: "Jaimee Burks", role: "Front End" },
+            { name: "Joshua Hayum", role: "Front End" },
+            { name: "Julie Harris", role: "Front End" },
+            { name: "Dominique Clark", role: "Mens" },
+            { name: "Michael Dean", role: "Door Greeter" },
+            { name: "Maya Shines", role: "Boys" },
+            { name: "Felecia Reed", role: "Ladies" }
+        ];
+
+        // Specific subareas mapped for the daily action planner programmatically
+        const subareaMapping = {
+            mens: [
+                "Top Pad",
+                "Bottom Pad (Denim)",
+                "Shorts",
+                "Big Men",
+                "Active",
+                "Men's Clearance",
+                "Hosiery"
+            ],
+            womens: [
+                "Juniors (JR)",
+                "Missy Pad",
+                "Plus Pad",
+                "Intimate Pad",
+                "Sleepwear Pad",
+                "Scrubs Uniform Pad",
+                "Women's Clearance"
+            ],
+            kids: [
+                "Boys Pad (8-20 / 4-7)",
+                "Boy Infants & Toddlers",
+                "Girls Pad (7-16 / 2T-6)",
+                "Girl Infants & Toddlers",
+                "Kids Clearance Area",
+                "Kids Footwear Grid",
+                "Under-Fixture Housekeeping"
+            ],
+            home: [
+                "All Home Goods (Z-Lining)",
+                "Home Goods (Label Facing)",
+                "Toys Pad (Facing)",
+                "Toys Pad (Heavy Safety)",
+                "Linen & Bedding Continuity",
+                "Home Clearance Corner",
+                "Stray Recovery Loop"
+            ],
+            front: [
+                "Perfume & Cologne Tables",
+                "Q-Line Impulse Density",
+                "Q-Line FIFO Rotation",
+                "Cash Wrap Station Hygiene",
+                "POS Hour Return Audits",
+                "Value Drop Table Signs",
+                "Cart Bay Entry Flow"
+            ],
+            backroom: [
+                "Conveyor Line Clearance",
+                "FIFO Freight Processing",
+                "Emergency Exit Clears",
+                "Security Dock Doors",
+                "Pallet Stacking Safety",
+                "Salvage Bin Management",
+                "Logistics Bay Clean Sweep"
+            ]
+        };
+
+        // 6 Core Departments with highly detailed 7-point visual item definitions mapping directly to grading loops
+        const auditSchema = {
+            mens: {
+                title: "1. Men's Apparel Pad",
+                pillId: "mens-pill-score",
+                listId: "mens-checkpoints-list",
+                icon: "fa-person",
+                items: [
+                    "<strong>Top Pad Alignment</strong>: 100% hung on bars or faceouts. Segmented cleanly by major vendor brands and grouped by color story blocks with hanger hooks facing inward.",
+                    "<strong>Bottom Pad Sizing Enforcement</strong>: Men's denim and casual waist/inseam profiles sorted strictly from smallest to largest with clear plastic size divider disks on all rack rods.",
+                    "<strong>Shorts Display Continuity</strong>: Arranged uniformly on faceouts or rounders. Disks match current inventories. Absolutely zero items left flat-folded or stacked.",
+                    "<strong>Big Men Segregation</strong>: Fixtures sorted left-to-right (1X to 6X). High-visibility oversized size divider tags checked. Brand boundaries kept separate from core men's pad runs.",
+                    "<strong>Active Pad Presentation</strong>: Hoodies, track jackets, and matching jogger sets organized cleanly on wall display peg boards or waterfalls. Priced and labeled accurately.",
+                    "<strong>Men's Clearance Sizing</strong>: Sorted from Small up to Big Mens sizes. Racks verified for volume—must remain under a strict 95% physical capacity envelope.",
+                    "<strong>Hosiery Pegwall Recovery</strong>: Packaged card socks faced forward. Rows pushed up symmetrically on pegs. Box labels fronted cleanly with zero loose items or tear clutters."
+                ]
+            },
+            womens: {
+                title: "2. Women's Apparel Pad",
+                pillId: "womens-pill-score",
+                listId: "womens-checkpoints-list",
+                icon: "fa-person-dress",
+                items: [
+                    "<strong>Juniors (JR) Style Profile</strong>: Hanging presentation grouped by graphic/style category. High-velocity seasonal items front-faced. Zero compression on hanging rods.",
+                    "<strong>Missy Pad Hanger Rules</strong>: Every garment hung in standard 'question-mark' format (hooks pointing left). No items left folded or stacked on display tables.",
+                    "<strong>Plus Size Brand Separation</strong>: Dedicated section boundaries clearly demarcated. Size divider disks intact on all cascading fixtures. Out-of-season items pulled.",
+                    "<strong>Intimate Pad Pegs & Bars</strong>: Intimate undergarments and shapewear 100% hung. Peg runs leveled and front-faced. Empty display slots flagged for stock runs.",
+                    "<strong>Sleepwear Set Integrity</strong>: Coordinated two-piece sleep sets securely attached and interlocked on a single performance hanger to prevent mismatched pieces.",
+                    "<strong>Scrubs Uniform Consistency</strong>: Medical uniforms grouped strictly by corporate color-block rules (all solid blacks together, navy runs separate) and sorted by size rows.",
+                    "<strong>Women's Clearance Maintenance</strong>: Racks cleared of empty hangers. Items sorted from Small up to Plus. Fixtures organized left-to-right to support swift customer sizing."
+                ]
+            },
+            kids: {
+                title: "3. Kids & Youth Pad",
+                pillId: "kids-pill-score",
+                listId: "kids-checkpoints-list",
+                icon: "fa-child-reaching",
+                items: [
+                    "<strong>Boys Growth Dividers</strong>: Strict visual separation between Youth 8-20 runs and Toddler 4-7 fixtures. Size divider disks verified on all active rounders.",
+                    "<strong>Boy Infants Coordination</strong>: Sized infant hanger configurations fully aligned. Two-piece coordinated sets tightly secured on single interlocked hangers.",
+                    "<strong>Girls Growth Segmentations</strong>: Clear division boundaries maintained between Girls 7-16 and 2T-6 pads. Faceouts and waterfall fixtures balanced symmetrically.",
+                    "<strong>Girl Infants Set Matching</strong>: Matching sets hooked together cleanly. Display bins or perimeter shelves arranged by age brackets with size labels turned forward.",
+                    "<strong>Kids Clearance Separation</strong>: Divided cleanly into age brackets and gender groups, then organized left-to-right by size. Rack capacity below the 95% compression limit.",
+                    "<strong>Kids Shoe Wall Facing</strong>: Footwear boxes stacked with end-labels facing outward to traffic lanes. Single display shoes centered on top grid rails.",
+                    "<strong>Under-Fixture Housekeeping</strong>: Clearance floor zones and spaces directly underneath base decks swept completely clean of tags, dust, and cardboard fragments."
+                ]
+            },
+            home: {
+                title: "4. Home Goods & Toys",
+                pillId: "home-pill-score",
+                listId: "home-checkpoints-list",
+                icon: "fa-house-chimney",
+                items: [
+                    "<strong>Shelf Edge Z-Lining</strong>: Complete Z-lining executed across all hardlines shelves—all items pulled forward to flush alignment at the absolute edge of the deck.",
+                    "<strong>Packaging Label Fronting</strong>: Product boxes, kitchenware cases, and domestics labels turned 100% forward toward the customer walkway vectors.",
+                    "<strong>Toys Pad Symmetrical Facing</strong>: Toy items arranged in straight rows on shelves. Package faces fronted cleanly. Stuffed animal display bins straightened.",
+                    "<strong>Heavy Box Stack Safety</strong>: Oversized or heavy toy boxes stacked squarely on bottom base decks. Higher shelves verified clear of tipping or overhead falling hazards.",
+                    "<strong>Linen & Comforter Stories</strong>: Pillows, towel runs, sheet sets, and bedding packages stacked cleanly by pattern story, design line, and color family sets.",
+                    "<strong>Home Clearance Precision</strong>: Markdowns grouped by merchandise family (kitchenware together, linens separate) with correct red clearance price signs visible.",
+                    "<strong>Aisle Egress Maintenance</strong>: Walkways completely clear of misplaced apparel carts, stray toy boxes, loose debris, or shipping pallet fragments."
+                ]
+            },
+            front: {
+                title: "5. Customer Service & Front End",
+                pillId: "front-pill-score",
+                listId: "front-checkpoints-list",
+                icon: "fa-cash-register",
+                items: [
+                    "<strong>Perfume Tables Showcase</strong>: Luxury fragrance display cabinets completely locked. Glass surfaces polished. Key group physically attached to manager's belt clip.",
+                    "<strong>Q-Line Grid Product Density</strong>: Lane shelves fully stocked to maximum merchandising capacity with zero bare spots. Front-faced and pulled forward completely.",
+                    "<strong>Impulse Snack FIFO Rules</strong>: Snacks, candy runs, and refrigerator beverages rotated strictly using first-in, first-out sequence based on package expiration dates.",
+                    "<strong>Cash Wrap Station Hygiene</strong>: Registers, counter surfaces, card swipe pads, receipt buckets, and lane dividers clear of associate cups, lunch bags, or trash.",
+                    "<strong>POS Hour Return Audits</strong>: Customer return carts and baskets behind registers emptied, sorted by department, and returned to appropriate floor bins every hour.",
+                    "<strong>Value Drop Table Signs</strong>: Centered, clean corporate promotional signage present on all front-end tables. Absolutely no handwritten price tags permitted.",
+                    "<strong>Cart Bay Entry Flow</strong>: Shopping carts nested cleanly inside designated rails. Customer entry vector wide open and clear of stray hangers or plastic clutter."
+                ]
+            },
+            backroom: {
+                title: "6. Backroom Logistics & Safety",
+                pillId: "backroom-pill-score",
+                listId: "backroom-checkpoints-list",
+                icon: "fa-truck-ramp-box",
+                items: [
+                    "<strong>Conveyor Processing Tracks</strong>: Line rails and rollers entirely free of unboxed loose items, processed cardboard piles, plastic shrink wraps, or trash blocks.",
+                    "<strong>Freight Pallet FIFO Dating</strong>: Incoming truck freight pallets tagged explicitly by arrival date and sorted to process older stock first (strict logistics FIFO).",
+                    "<strong>Fire Exit & Panel Clearance</strong>: Absolute 36-inch clear floor perimeter maintained around all emergency fire doors, fire extinguishers, and main electrical panels.",
+                    "<strong>Dock Security Door Locks</strong>: External metal receiving dock doors down, locked, and latch-bolted when a truck is not actively unloading cargo pins.",
+                    "<strong>Empty Pallet Stack Safety</strong>: Wood pallets stacked evenly in designated warehouse storage squares, capped at a maximum safety ceiling of 12 pallets high.",
+                    "<strong>Salvage Bin Management</strong>: Damaged, out-of-season packaways, or defect garments logged and stored neatly inside designated bins with zero floor pileups.",
+                    "<strong>Logistics Bay Clean Sweep</strong>: Unloading bays and processing floors swept daily. Area kept clear of fallen tickets, pricing labels, and broken hangers."
+                ]
+            }
+        };
+
+        // Flat mapping of checkpoints for easy state management
+        let checkpoints = {};
+
+        // Initialize checkpoints mapping state from schema
+        Object.keys(auditSchema).forEach(deptKey => {
+            checkpoints[deptKey] = {
+                score: 3, 
+                status: null, 
+                notes: ''
+            };
+        });
+
+        // Dynamic Subarea Dropdown Populate Engine
+        function updatePlannerSubareas() {
+            const areaSelector = document.getElementById('planner-area');
+            const subareaSelector = document.getElementById('planner-subarea');
+            const selectedArea = areaSelector.value;
+
+            // Clear existing options
+            subareaSelector.innerHTML = '';
+
+            if (!selectedArea) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.innerText = "-- Select Area First --";
+                subareaSelector.appendChild(opt);
+                return;
+            }
+
+            // Get target sub-areas array
+            const subareas = subareaMapping[selectedArea] || [];
+            
+            // Generate clean option items
+            subareas.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub;
+                opt.innerText = sub;
+                subareaSelector.appendChild(opt);
+            });
+        }
+
+        // Toggle custom action method text field based on selection
+        function toggleCustomUpgradeInput() {
+            const upgradeSelector = document.getElementById('planner-upgrade-type');
+            const customInputContainer = document.getElementById('planner-custom-upgrade-container');
+            
+            if (upgradeSelector.value === 'Other') {
+                customInputContainer.classList.remove('hidden');
+            } else {
+                customInputContainer.classList.add('hidden');
+                document.getElementById('planner-custom-upgrade').value = '';
+            }
+        }
+
+        // Daily Action Planner Logging Engine
+        function logDailyPlan() {
+            const manager = document.getElementById('planner-manager').value;
+            const areaKey = document.getElementById('planner-area').value;
+            const subarea = document.getElementById('planner-subarea').value;
+            const upgradeSelector = document.getElementById('planner-upgrade-type');
+            let upgradeType = upgradeSelector.value;
+            const duration = document.getElementById('planner-duration').value;
+            const desc = document.getElementById('planner-desc').value;
+            const date = document.getElementById('planner-date').value;
+
+            // Handle custom typed upgrade value if "Other" is selected
+            if (upgradeType === 'Other') {
+                upgradeType = document.getElementById('planner-custom-upgrade').value.trim();
+            }
+
+            if (!manager || !areaKey || !subarea || !upgradeType || !duration || !desc.trim()) {
+                showToast("Fields Incomplete", "Please complete all fields to submit your daily operations plan.", "fa-triangle-exclamation", "bg-amber-600");
+                return;
+            }
+
+            const planId = 'PLAN-' + Date.now();
+            const planPayload = {
+                id: planId,
+                manager: manager,
+                area: auditSchema[areaKey]?.title || areaKey,
+                subarea: subarea,
+                upgradeType: upgradeType,
+                duration: duration,
+                desc: desc,
+                date: date,
+                status: "Planned", // Planned -> In-Progress -> Completed / Rollover
+                smComments: ""
+            };
+
+            const dailyPlans = JSON.parse(localStorage.getItem('forman_daily_plans') || '[]');
+            dailyPlans.unshift(planPayload);
+            localStorage.setItem('forman_daily_plans', JSON.stringify(dailyPlans));
+
+            // Clear planner form input
+            document.getElementById('planner-upgrade-type').value = "";
+            document.getElementById('planner-custom-upgrade').value = "";
+            document.getElementById('planner-custom-upgrade-container').classList.add('hidden');
+            document.getElementById('planner-duration').value = "";
+            document.getElementById('planner-desc').value = "";
+
+            renderDailyPlans();
+            showToast("Plan Saved", `Operational target locked for ${manager}.`, "fa-calendar-check", "bg-emerald-600");
+        }
+
+        // Render Plans to Screen
+        function renderDailyPlans() {
+            const plans = JSON.parse(localStorage.getItem('forman_daily_plans') || '[]');
+            const container = document.getElementById('active-plans-stack');
+
+            if (plans.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-400 font-semibold text-xs">
+                        <i class="fa-regular fa-calendar-minus text-2xl mb-2 block"></i>
+                        No active daily action plans have been logged for today.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            plans.forEach(plan => {
+                let badgeClass = "bg-blue-100 text-blue-800 border-blue-200";
+                if (plan.status === "In-Progress") badgeClass = "bg-amber-100 text-amber-800 border-amber-200";
+                if (plan.status === "Completed") badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-200";
+                if (plan.status === "Rollover") badgeClass = "bg-red-100 text-red-800 border-red-200";
+
+                const planCard = document.createElement('div');
+                planCard.className = "bg-white border border-gray-200 rounded-xl p-4 space-y-3 shadow-sm hover:shadow transition-all relative";
+                planCard.innerHTML = `
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-2.5 gap-2">
+                        <div>
+                            <h4 class="font-extrabold text-xs text-navy-500 uppercase flex items-center">
+                                <i class="fa-solid fa-user-gear mr-1.5 text-crimson-500"></i>${plan.manager}
+                            </h4>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase mt-0.5">
+                                ${plan.area} &gt; <span class="text-navy-500 font-extrabold">${plan.subarea}</span> | Logged: ${plan.date}
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-[10px] font-extrabold border px-2.5 py-0.5 rounded-full uppercase ${badgeClass}">${plan.status}</span>
+                            <button onclick="deletePlan('${plan.id}')" class="text-gray-400 hover:text-red-500 transition-all text-xs" title="Delete Plan"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <p class="text-xs text-gray-600 font-medium">
+                            <strong class="text-navy-500 uppercase text-[10px] block mb-0.5">Upgrade Method:</strong>
+                            ${plan.upgradeType}
+                        </p>
+                        <p class="text-xs text-gray-600 leading-relaxed font-medium bg-gray-50 border border-gray-150 p-2.5 rounded-lg">
+                            <strong class="text-navy-500 uppercase text-[10px] block mb-1">Execution Tasks:</strong>
+                            ${plan.desc}
+                        </p>
+                        <div class="flex items-center justify-between text-[11px] text-gray-500 font-bold pt-1">
+                            <span><i class="fa-regular fa-clock mr-1 text-crimson-500"></i>Target Duration: ${plan.duration}</span>
+                        </div>
+                    </div>
+
+                    <!-- Store Manager Interactive Feedback Controls -->
+                    <div class="bg-navy-50 rounded-lg p-3 border border-navy-100 space-y-2">
+                        <div class="flex flex-wrap justify-between items-center gap-2">
+                            <span class="text-[10px] font-extrabold text-navy-500 uppercase tracking-wider flex items-center">
+                                <i class="fa-solid fa-user-shield mr-1"></i>Christopher / Shanetta Controls:
+                            </span>
+                            <div class="flex space-x-1">
+                                <button onclick="updatePlanStatus('${plan.id}', 'In-Progress')" class="bg-white hover:bg-amber-100 border border-gray-200 text-amber-800 text-[9px] font-extrabold px-2 py-1 rounded transition-all">IN PROGRESS</button>
+                                <button onclick="updatePlanStatus('${plan.id}', 'Completed')" class="bg-white hover:bg-emerald-100 border border-gray-200 text-emerald-800 text-[9px] font-extrabold px-2 py-1 rounded transition-all">COMPLETE</button>
+                                <button onclick="updatePlanStatus('${plan.id}', 'Rollover')" class="bg-white hover:bg-red-100 border border-gray-200 text-red-800 text-[9px] font-extrabold px-2 py-1 rounded transition-all">ROLLOVER</button>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 mt-1">
+                            <input type="text" id="sm-comment-${plan.id}" value="${plan.smComments || ''}" placeholder="Add SM/ASM feedback or sign-off notes here..." class="flex-1 bg-white border border-gray-200 rounded p-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-navy-500 font-semibold">
+                            <button onclick="saveSMComment('${plan.id}')" class="bg-navy-500 hover:bg-navy-600 text-white text-[10px] font-bold px-3 py-1.5 rounded transition-all shrink-0">Save Feedback</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(planCard);
+            });
+        }
+
+        // Update SM comment on plans
+        function saveSMComment(planId) {
+            const comment = document.getElementById(`sm-comment-${planId}`).value;
+            const plans = JSON.parse(localStorage.getItem('forman_daily_plans') || '[]');
+            const index = plans.findIndex(p => p.id === planId);
+            
+            if (index !== -1) {
+                plans[index].smComments = comment;
+                localStorage.setItem('forman_daily_plans', JSON.stringify(plans));
+                renderDailyPlans();
+                showToast("Feedback Saved", "SM evaluation logged successfully.", "fa-user-shield", "bg-navy-500");
+            }
+        }
+
+        // Update plan status
+        function updatePlanStatus(planId, newStatus) {
+            const plans = JSON.parse(localStorage.getItem('forman_daily_plans') || '[]');
+            const index = plans.findIndex(p => p.id === planId);
+            
+            if (index !== -1) {
+                plans[index].status = newStatus;
+                localStorage.setItem('forman_daily_plans', JSON.stringify(plans));
+                renderDailyPlans();
+                showToast("Status Changed", `Plan status updated to ${newStatus}.`, "fa-sliders", "bg-navy-500");
+            }
+        }
+
+        // Delete plan safely
+        function deletePlan(planId) {
+            if (confirm("Are you sure you want to delete this shift plan card?")) {
+                let plans = JSON.parse(localStorage.getItem('forman_daily_plans') || '[]');
+                plans = plans.filter(p => p.id !== planId);
+                localStorage.setItem('forman_daily_plans', JSON.stringify(plans));
+                renderDailyPlans();
+                showToast("Plan Deleted", "Operational shift plan card removed.", "fa-trash", "bg-crimson-500");
+            }
+        }
+
+        // Populate roster dropdown elements across the application
+        function populateRosterDropdowns() {
+            const dropdowns = document.querySelectorAll('.assoc-dropdown');
+            const trainingSelector = document.getElementById('train-assoc-select');
+            
+            dropdowns.forEach(select => {
+                select.innerHTML = ''; 
+                masterAssociates.forEach(assoc => {
+                    const opt = document.createElement('option');
+                    opt.value = assoc.name;
+                    opt.innerText = assoc.role ? `${assoc.name} (${assoc.role})` : assoc.name;
+                    select.appendChild(opt);
+                });
+            });
+
+            if (trainingSelector) {
+                trainingSelector.innerHTML = '';
+                masterAssociates.forEach(assoc => {
+                    if (assoc.name !== "-- Select Associate --") {
+                        const opt = document.createElement('option');
+                        opt.value = assoc.name;
+                        opt.innerText = assoc.role ? `${assoc.name} (${assoc.role})` : assoc.name;
+                        trainingSelector.appendChild(opt);
+                    }
+                });
+            }
+        }
+
+        // Dynamic Associate Row Addition Engine
+        function addAssociateRow(padKey) {
+            const container = document.getElementById(`deployment-container-${padKey}`);
+            const rowId = `row-${padKey}-${Date.now()}`;
+            
+            // Build name options
+            let rosterOptions = '';
+            masterAssociates.forEach(assoc => {
+                const formattedName = assoc.role ? `${assoc.name} (${assoc.role})` : assoc.name;
+                rosterOptions += `<option value="${assoc.name}">${formattedName}</option>`;
+            });
+
+            // Build sub-area dynamic options based on padKey
+            let subareaOptions = '<option value="">-- Choose Owned Sub-Area Pad --</option>';
+            const subareas = subareaMapping[padKey] || [];
+            subareas.forEach(sub => {
+                subareaOptions += `<option value="${sub}">${sub}</option>`;
+            });
+
+            const rowDiv = document.createElement('div');
+            rowDiv.id = rowId;
+            rowDiv.className = "flex flex-col bg-white border border-gray-200 rounded-lg p-3 gap-3 shadow-inner relative pt-10 sm:pt-4";
+            rowDiv.innerHTML = `
+                <!-- Delete row button positioned cleanly -->
+                <button onclick="removeAssociateRow('${rowId}')" class="absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-crimson-500 hover:text-crimson-600 p-2 rounded-lg border border-red-100 transition-all shrink-0 shadow-sm" title="Remove Assignment">
+                    <i class="fa-solid fa-user-minus text-xs"></i>
+                </button>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Select Associate drop list -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Select Associate Name</label>
+                        <select class="assoc-select w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-xs font-semibold focus:ring-1 focus:ring-navy-500 focus:outline-none">
+                            ${rosterOptions}
+                        </select>
+                    </div>
+
+                    <!-- Dynamic Sub-Area select dropdown -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Assigned Sub-Area Ownership</label>
+                        <select class="assoc-subarea-select w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-xs font-semibold focus:ring-1 focus:ring-navy-500 focus:outline-none text-navy-500">
+                            ${subareaOptions}
+                        </select>
+                    </div>
+
+                    <!-- Shift segment selection -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Shift Segment</label>
+                        <select class="assoc-segment w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-xs font-semibold focus:outline-none">
+                            <option value="Day">Day Shift</option>
+                            <option value="Close">Closing Shift</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Dropdown score grading (1-10) -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Close Grade Handoff Evaluation</label>
+                        <select class="assoc-grade w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-xs font-bold focus:outline-none text-crimson-600">
+                            <option value="10" selected>Grade 10 - Grand-Opening Level</option>
+                            <option value="9">Grade 9 - Excellent Standards</option>
+                            <option value="8">Grade 8 - Fully Compliant</option>
+                            <option value="7">Grade 7 - Minor Sizing Issues</option>
+                            <option value="6">Grade 6 - Needs Recovery Training</option>
+                            <option value="5">Grade 5 - Visual Presentation Deficits</option>
+                            <option value="4">Grade 4 - High Area Clutter</option>
+                            <option value="3">Grade 3 - Layout Altered (Major Deficits)</option>
+                            <option value="2">Grade 2 - Under-Developed Pad Reset</option>
+                            <option value="1">Grade 1 - Extreme Non-Compliance</option>
+                        </select>
+                    </div>
+
+                    <!-- Dynamic notes by manager to point out training opportunity -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Manager Training Opportunity Notes</label>
+                        <input type="text" class="assoc-training-notes w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-xs font-semibold focus:ring-1 focus:ring-navy-500 focus:outline-none" placeholder="Notes on hanger question-marks, sizing array issues, etc...">
+                    </div>
+                </div>
+
+                <!-- Mandatory Expectations & Sign-Off Banner (Builds pride & holds associate accountable) -->
+                <div class="bg-navy-50 border border-navy-100 rounded-lg p-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[11px] text-navy-700">
+                    <p class="leading-relaxed font-medium">
+                        <i class="fa-solid fa-circle-check text-navy-500 mr-1.5"></i>
+                        <strong>Expectation Agreement:</strong> Pad owner must spend the first 2 hours of their shift running clothing racks directly to their assigned sub-area without making layout alterations, placing merchandise strictly in assigned slots approved by the Merchandise Manager.
+                    </p>
+                    <label class="flex items-center space-x-2 bg-white border border-navy-200 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-navy-100 select-none shrink-0 font-extrabold text-navy-500">
+                        <input type="checkbox" class="assoc-signoff w-4 h-4 text-navy-500 rounded border-navy-300 focus:ring-navy-500">
+                        <span>Associate Sign-off</span>
+                    </label>
+                </div>
+            `;
+            container.appendChild(rowDiv);
+        }
+
+        function removeAssociateRow(rowId) {
+            const el = document.getElementById(rowId);
+            if (el) {
+                el.parentNode.removeChild(el);
+            }
+        }
+
+        // Render department-level cards containing their 7-point visual checklists
+        function buildCheckpointsUI() {
+            const container = document.getElementById('department-grid-container');
+            container.innerHTML = ''; 
+
+            Object.keys(auditSchema).forEach(deptKey => {
+                const dept = auditSchema[deptKey];
+                
+                let itemsListHtml = '';
+                dept.items.forEach(item => {
+                    itemsListHtml += `
+                        <li class="flex items-start space-x-2 text-[11px] text-gray-600 font-medium border-b border-gray-50 pb-1.5 last:border-0 last:pb-0">
+                            <span class="text-crimson-500 font-bold mt-0.5">•</span>
+                            <span>${item}</span>
+                        </li>
+                    `;
+                });
+
+                const card = document.createElement('div');
+                card.className = "bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-4 shadow-sm";
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-2.5 gap-2">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="bg-navy-500 text-white p-2 rounded-lg">
+                                <i class="fa-solid ${dept.icon} text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-sm text-navy-500 uppercase tracking-wide">${dept.title}</h3>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">7 Point Deep-Dive Spec Guide</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <button onclick="setCheckpointStatus('${deptKey}', 'P')" id="btn-${deptKey}-P" class="px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-300 bg-white hover:bg-emerald-50 hover:text-emerald-600 transition-all">PASS</button>
+                            <button onclick="setCheckpointStatus('${deptKey}', 'F')" id="btn-${deptKey}-F" class="px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-300 bg-white hover:bg-red-50 hover:text-red-600 transition-all">FAIL</button>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Reference Checklist -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-3.5 shadow-inner">
+                        <ul class="flex flex-col space-y-2">
+                            ${itemsListHtml}
+                        </ul>
+                    </div>
+
+                    <!-- Single Grade Adjustment & Note field -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div class="flex items-center space-x-2.5">
+                            <label class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Score Linkage:</label>
+                            <select id="score-${deptKey}" onchange="calculateRealtimeMetrics()" class="flex-1 bg-white border border-gray-300 rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-navy-500 focus:outline-none">
+                                <option value="5">Grade 5 - Corporate Grand Opening</option>
+                                <option value="4">Grade 4 - High Visual Standard</option>
+                                <option value="3" selected>Grade 3 - Acceptable / Compliant</option>
+                                <option value="2">Grade 2 - Minor Presentation Deficits</option>
+                                <option value="1">Grade 1 - Major Floor Disarray</option>
+                                <option value="0">Grade 0 - Critical Non-Compliance</option>
+                            </select>
+                        </div>
+                        <input type="text" id="note-${deptKey}" oninput="updateNoteState('${deptKey}')" placeholder="Detail notes regarding recovery deficiencies..." class="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-navy-500 focus:outline-none">
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Coaching Log Management
+        function logTrainingSession() {
+            const associate = document.getElementById('train-assoc-select').value;
+            const subject = document.getElementById('train-subject-select').value;
+            
+            if (!associate) {
+                showToast("Roster Selection Error", "Please select an associate's name to complete this log.", "fa-user-slash", "bg-amber-600");
+                return;
+            }
+
+            const newLog = {
+                date: new Date().toLocaleDateString('en-US'),
+                associate: associate,
+                subject: subject,
+                status: "Verified & Competent"
+            };
+
+            const trainingHistory = JSON.parse(localStorage.getItem('forman_training_history') || '[]');
+            trainingHistory.unshift(newLog);
+            localStorage.setItem('forman_training_history', JSON.stringify(trainingHistory));
+
+            updateCoachingLogTable();
+            updateAnalyticsDashboard();
+
+            showToast("Coaching Session Stored", `${associate} was coached on ${subject}.`, "fa-address-book", "bg-emerald-600");
+        }
+
+        function updateCoachingLogTable() {
+            const logs = JSON.parse(localStorage.getItem('forman_training_history') || '[]');
+            const container = document.getElementById('coaching-history-rows');
+            
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="py-4 text-center text-gray-400 font-semibold text-[11px]">No logged coaching session records found.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            logs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-all border-b border-gray-100";
+                tr.innerHTML = `
+                    <td class="py-2 px-3 text-[11px] text-gray-500 font-bold font-mono">${log.date}</td>
+                    <td class="py-2 px-3 text-xs text-gray-800 font-extrabold">${log.associate}</td>
+                    <td class="py-2 px-3 text-xs text-gray-700">${log.subject}</td>
+                    <td class="py-2 px-3"><span class="bg-emerald-100 text-emerald-800 text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase">${log.status}</span></td>
+                `;
+                container.appendChild(tr);
+            });
+        }
+
+        // Sharing Modals Controls
+        function openShareModal() {
+            document.getElementById('share-modal').classList.remove('hidden');
+        }
+
+        function closeShareModal() {
+            document.getElementById('share-modal').classList.add('hidden');
+        }
+
+        // Native offline HTML file compilation and downloader
+        function exportHTMLFile() {
+            try {
+                const compiledSource = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+                const blob = new Blob([compiledSource], { type: "text/html;charset=utf-8" });
+                
+                const tempLink = document.createElement("a");
+                tempLink.href = URL.createObjectURL(blob);
+                tempLink.download = "Forman_Mills_611_Daily_Walk_Audit.html";
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
+                
+                showToast("File Downloaded!", "Send this file to Christopher & Shanetta via email!", "fa-circle-down", "bg-emerald-600");
+                closeShareModal();
+            } catch (err) {
+                showToast("Download Interrupted", "Failed to compile page sources.", "fa-triangle-exclamation", "bg-crimson-500");
+            }
+        }
+
+        // Tab selection controller
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.getElementById('section-daily-planner').classList.add('hidden');
+            document.getElementById('section-audit-run').classList.add('hidden');
+            document.getElementById('section-training-academy').classList.add('hidden');
+            document.getElementById('section-analytics-dashboard').classList.add('hidden');
+            
+            document.getElementById('tab-daily-planner').className = "flex-1 py-2.5 text-center font-bold text-xs rounded-lg text-gray-500 hover:text-navy-500 hover:bg-gray-100 transition-all duration-200";
+            document.getElementById('tab-audit-run').className = "flex-1 py-2.5 text-center font-bold text-xs rounded-lg text-gray-500 hover:text-navy-500 hover:bg-gray-100 transition-all duration-200";
+            document.getElementById('tab-training-academy').className = "flex-1 py-2.5 text-center font-bold text-xs rounded-lg text-gray-500 hover:text-navy-500 hover:bg-gray-100 transition-all duration-200";
+            document.getElementById('tab-analytics-dashboard').className = "flex-1 py-2.5 text-center font-bold text-xs rounded-lg text-gray-500 hover:text-navy-500 hover:bg-gray-100 transition-all duration-200";
+
+            document.getElementById('nav-icon-daily-planner').className = "fa-solid fa-calendar-day text-lg text-gray-400";
+            document.getElementById('nav-lbl-daily-planner').className = "text-[10px] mt-0.5 text-gray-400 font-medium";
+            document.getElementById('nav-icon-audit-run').className = "fa-solid fa-clipboard-check text-lg text-gray-400";
+            document.getElementById('nav-lbl-audit-run').className = "text-[10px] mt-0.5 text-gray-400 font-medium";
+            document.getElementById('nav-icon-training').className = "fa-solid fa-graduation-cap text-lg text-gray-400";
+            document.getElementById('nav-lbl-training').className = "text-[10px] mt-0.5 text-gray-400 font-medium";
+            document.getElementById('nav-icon-analytics').className = "fa-solid fa-chart-line text-lg text-gray-400";
+            document.getElementById('nav-lbl-analytics').className = "text-[10px] mt-0.5 text-gray-400 font-medium";
+
+            if (tabId === 'daily-planner') {
+                document.getElementById('section-daily-planner').classList.remove('hidden');
+                document.getElementById('tab-daily-planner').className = "flex-1 py-2.5 text-center font-bold text-xs rounded-lg bg-navy-500 text-white transition-all duration-200";
+                document.getElementById('nav-icon-daily-planner').className = "fa-solid fa-calendar-day text-lg text-navy-500";
+                document.getElementById('nav-lbl-daily-planner').className = "text-[10px] mt-0.5 text-navy-500";
+                renderDailyPlans();
+            } else if (tabId === 'audit-run') {
+                document.getElementById('section-audit-run').classList.remove('hidden');
+                document.getElementById('tab-audit-run').className = "flex-1 py-2.5 text-center font-bold text-xs rounded-lg bg-navy-500 text-white transition-all duration-200";
+                document.getElementById('nav-icon-audit-run').className = "fa-solid fa-clipboard-check text-lg text-navy-500";
+                document.getElementById('nav-lbl-audit-run').className = "text-[10px] mt-0.5 text-navy-500";
+            } else if (tabId === 'training-academy') {
+                document.getElementById('section-training-academy').classList.remove('hidden');
+                document.getElementById('tab-training-academy').className = "flex-1 py-2.5 text-center font-bold text-xs rounded-lg bg-navy-500 text-white transition-all duration-200";
+                document.getElementById('nav-icon-training').className = "fa-solid fa-graduation-cap text-lg text-navy-500";
+                document.getElementById('nav-lbl-training').className = "text-[10px] mt-0.5 text-navy-500";
+            } else if (tabId === 'analytics-dashboard') {
+                document.getElementById('section-analytics-dashboard').classList.remove('hidden');
+                document.getElementById('tab-analytics-dashboard').className = "flex-1 py-2.5 text-center font-bold text-xs rounded-lg bg-navy-500 text-white transition-all duration-200";
+                document.getElementById('nav-icon-analytics').className = "fa-solid fa-chart-line text-lg text-navy-500";
+                document.getElementById('nav-lbl-analytics').className = "text-[10px] mt-0.5 text-navy-500";
+                updateAnalyticsDashboard();
+            }
+        }
+
+        // Set checkpoint status cleanly
+        function setCheckpointStatus(key, status) {
+            checkpoints[key].status = status;
+            
+            const passBtn = document.getElementById(`btn-${key}-P`);
+            const failBtn = document.getElementById(`btn-${key}-F`);
+            const scoreSelect = document.getElementById(`score-${key}`);
+            
+            passBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-300 bg-white hover:bg-emerald-50 hover:text-emerald-600 transition-all";
+            failBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-300 bg-white hover:bg-red-50 hover:text-red-600 transition-all";
+            
+            if (status === 'P') {
+                passBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg border-emerald-500 bg-emerald-600 text-white transition-all";
+                if (scoreSelect.value < 3) scoreSelect.value = "3";
+            } else if (status === 'F') {
+                failBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg border-red-500 bg-crimson-500 text-white transition-all";
+                scoreSelect.value = "1"; 
+            }
+            
+            calculateRealtimeMetrics();
+        }
+
+        function updateNoteState(key) {
+            checkpoints[key].notes = document.getElementById(`note-${key}`).value;
+        }
+
+        // Instant mark everything pass utility
+        function markAllPassed() {
+            Object.keys(checkpoints).forEach(key => {
+                setCheckpointStatus(key, 'P');
+            });
+            showToast("System Verified", "All operational compliance fields set to PASS.", "fa-circle-check", "bg-emerald-600");
+        }
+
+        // Timing Controls and Walk Initialization
+        function toggleWalkTimer() {
+            const name = document.getElementById('auditor-name').value;
+            const shift = document.getElementById('shift-hours').value;
+            
+            if (!name || !shift) {
+                showToast("Setup Parameters Required", "Please select your name and scheduled shift hour window first.", "fa-triangle-exclamation", "bg-amber-600");
+                return;
+            }
+
+            if (!walkActive) {
+                walkActive = true;
+                walkStartTime = new Date();
+                
+                document.getElementById('display-start-time').innerText = walkStartTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                document.getElementById('timestamp-info-banner').classList.remove('hidden');
+                document.getElementById('floor-audit-panel').classList.remove('hidden');
+                
+                document.getElementById('btn-timer-action').className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center space-x-2";
+                document.getElementById('timer-action-icon').className = "fa-solid fa-pause animate-pulse";
+                document.getElementById('timer-action-text').innerText = "Pause Active Run";
+                
+                document.getElementById('auditor-name').disabled = true;
+                document.getElementById('shift-hours').disabled = true;
+
+                walkTimerInterval = setInterval(updateLiveTimer, 1000);
+                showToast("Walk Audit Initialized", `Manager walk session started dynamically for ${name}.`, "fa-stopwatch", "bg-navy-500");
+            } else {
+                walkActive = false;
+                clearInterval(walkTimerInterval);
+                document.getElementById('btn-timer-action').className = "w-full bg-crimson-500 hover:bg-crimson-600 text-white font-bold py-2.5 px-4 rounded-lg text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center space-x-2";
+                document.getElementById('timer-action-icon').className = "fa-solid fa-play";
+                document.getElementById('timer-action-text').innerText = "Resume Walk Audit";
+                showToast("Walk Audit Paused", "Floor compliance check paused. Timing metrics cached.", "fa-circle-pause", "bg-amber-600");
+            }
+        }
+
+        function updateLiveTimer() {
+            if (!walkStartTime) return;
+            const now = new Date();
+            const difference = now - walkStartTime;
+            
+            const hours = Math.floor(difference / 3600000);
+            const minutes = Math.floor((difference % 3600000) / 60000);
+            const seconds = Math.floor((difference % 60000) / 1000);
+            
+            const formattedTime = 
+                (hours < 10 ? '0' + hours : hours) + ':' +
+                (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                (seconds < 10 ? '0' + seconds : seconds);
+                
+            document.getElementById('live-timer').innerText = formattedTime;
+            document.getElementById('display-elapsed-duration').innerText = `${minutes}m ${seconds}s`;
+        }
+
+        // Live KPI Engine (Calculated FMI and SCS in real-time based on 6 key departments)
+        function calculateRealtimeMetrics() {
+            let grandTotalAvailable = 0;
+            let grandTotalScored = 0;
+            
+            let safetyInspected = 0;
+            let safetyPassed = 0;
+
+            Object.keys(checkpoints).forEach(key => {
+                const cp = checkpoints[key];
+                const selectElement = document.getElementById(`score-${key}`);
+                const currentScore = parseInt(selectElement ? selectElement.value : 3);
+                cp.score = currentScore;
+
+                if (cp.status === 'P') {
+                    grandTotalAvailable += 5;
+                    grandTotalScored += currentScore;
+
+                    if (key === 'backroom' || key === 'front') {
+                        safetyInspected++;
+                        safetyPassed++;
+                    }
+                } else if (cp.status === 'F') {
+                    grandTotalAvailable += 5;
+                    grandTotalScored += currentScore;
+
+                    if (key === 'backroom' || key === 'front') {
+                        safetyInspected++;
+                    }
+                }
+            });
+
+            // Calculate overall Floor Merchandising Index (FMI)
+            let finalFMI = 0;
+            if (grandTotalAvailable > 0) {
+                finalFMI = ((grandTotalScored / grandTotalAvailable) * 100).toFixed(1);
+            }
+            document.getElementById('index-fmi').innerText = finalFMI + '%';
+
+            // Calculate Safety score index
+            let finalSCS = 100;
+            if (safetyInspected > 0) {
+                finalSCS = Math.round((safetyPassed / safetyInspected) * 100);
+            }
+            
+            // Hard gate safety violation penalty
+            if (checkpoints.backroom.status === 'F' || checkpoints.front.status === 'F') {
+                finalSCS = Math.min(finalSCS, 50); 
+            }
+
+            const scsEl = document.getElementById('index-scs');
+            scsEl.innerText = finalSCS + '%';
+            if (finalSCS < 90) {
+                scsEl.className = "text-sm font-extrabold text-red-500 animate-pulse";
+            } else {
+                scsEl.className = "text-sm font-extrabold text-emerald-400";
+            }
+        }
+
+        // Parse dynamic associate deployment cards out of step 3 containers
+        function extractDeploymentsData(padKey) {
+            const container = document.getElementById(`deployment-container-${padKey}`);
+            const rows = container.querySelectorAll(`[id^="row-${padKey}-"]`);
+            const records = [];
+
+            rows.forEach(row => {
+                const assocName = row.querySelector('.assoc-select').value;
+                const shiftSegment = row.querySelector('.assoc-segment').value;
+                const isSignedOff = row.querySelector('.assoc-signoff').checked;
+                const closeGrade = row.querySelector('.assoc-grade').value || "10";
+                const trainingNotes = row.querySelector('.assoc-training-notes').value || "";
+                const subarea = row.querySelector('.assoc-subarea-select').value || "";
+
+                if (assocName !== "-- Select Associate --") {
+                    records.push({
+                        associate: assocName,
+                        subarea: subarea,
+                        segment: shiftSegment,
+                        signedOff: isSignedOff,
+                        grade: closeGrade,
+                        trainingNotes: trainingNotes
+                    });
+                }
+            });
+
+            return records;
+        }
+
+        // Submitting audit
+        function submitDailyAudit() {
+            if (!walkActive && !walkStartTime) {
+                showToast("Audit Not Active", "Please initialize the walk timer and record floor data before submitting.", "fa-circle-exclamation", "bg-red-600");
+                return;
+            }
+
+            const signature = document.getElementById('manager-signature').value;
+            if (!signature.trim()) {
+                showToast("Verification Required", "Please type your electronic signature name to log this compliance walk.", "fa-signature", "bg-amber-600");
+                return;
+            }
+
+            const now = new Date();
+            const durationText = document.getElementById('live-timer').innerText;
+            const finalFMI = document.getElementById('index-fmi').innerText;
+            const finalSCS = document.getElementById('index-scs').innerText;
+            const auditor = document.getElementById('auditor-name').value;
+            const shift = document.getElementById('shift-hours').value;
+            
+            const deployments = {
+                mens: extractDeploymentsData('mens'),
+                womens: extractDeploymentsData('womens'),
+                kids: extractDeploymentsData('kids'),
+                home: extractDeploymentsData('home')
+            };
+
+            const trainingGaps = {
+                sizing: document.getElementById('gap-sizing').checked,
+                zlining: document.getElementById('gap-zlining').checked,
+                hanger: document.getElementById('gap-hanger').checked,
+                sets: document.getElementById('gap-sets').checked
+            };
+
+            const auditPayload = {
+                id: 'AUD-' + Date.now(),
+                date: new Date().toLocaleDateString('en-US'),
+                startTime: walkStartTime.toLocaleTimeString('en-US'),
+                endTime: now.toLocaleTimeString('en-US'),
+                duration: durationText,
+                auditor: auditor,
+                shift: shift,
+                fmi: finalFMI,
+                scs: finalSCS,
+                checkpoints: JSON.parse(JSON.stringify(checkpoints)),
+                deployments: deployments,
+                trainingGaps: trainingGaps,
+                escalations: document.getElementById('escalation-notes').value,
+                executiveNotes: document.getElementById('executive-notes').value,
+                signature: signature
+            };
+
+            const auditHistory = JSON.parse(localStorage.getItem('forman_audit_history') || '[]');
+            auditHistory.unshift(auditPayload);
+            localStorage.setItem('forman_audit_history', JSON.stringify(auditHistory));
+
+            clearInterval(walkTimerInterval);
+            walkActive = false;
+            walkStartTime = null;
+
+            localStorage.removeItem('forman_active_draft');
+            resetAuditWorkspace();
+
+            showToast("Compliance Logged Successfully", "Master Audit has been securely stored in the local database.", "fa-cloud-arrow-up", "bg-emerald-600");
+            switchTab('analytics-dashboard');
+        }
+
+        // CSV Exporter
+        function exportAuditMasterToCSV() {
+            const history = JSON.parse(localStorage.getItem('forman_audit_history') || '[]');
+            if (history.length === 0) {
+                showToast("Export Denied", "No historical compliance audits found to export.", "fa-folder-open", "bg-red-600");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Audit ID,Date,Start Time,End Time,Duration,Auditor,Shift Window,FMI Score,Safety Score,Executive Notes,Escalations,Signature,DeploymentsCount\n";
+            
+            history.forEach(audit => {
+                const escapedNotes = (audit.executiveNotes || '').replace(/"/g, '""');
+                const escapedEscalations = (audit.escalations || '').replace(/"/g, '""');
+                
+                let totalDeps = 0;
+                if (audit.deployments) {
+                    totalDeps += (audit.deployments.mens?.length || 0);
+                    totalDeps += (audit.deployments.womens?.length || 0);
+                    totalDeps += (audit.deployments.kids?.length || 0);
+                    totalDeps += (audit.deployments.home?.length || 0);
+                }
+
+                csvContent += `"${audit.id}","${audit.date}","${audit.startTime}","${audit.endTime}","${audit.duration}","${audit.auditor}","${audit.shift}","${audit.fmi}","${audit.scs}","${escapedNotes}","${escapedEscalations}","${audit.signature}","${totalDeps}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Store611_Operations_Audit_Master_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast("CSV Log Exported", "Master spreadsheet downloaded. Ready for Google Sheets integration.", "fa-file-excel", "bg-emerald-600");
+        }
+
+        // Purge history logs
+        function clearAuditHistory() {
+            if (confirm("Are you sure you want to delete all saved compliance walk histories? This action is permanent and cannot be undone.")) {
+                localStorage.removeItem('forman_audit_history');
+                localStorage.removeItem('forman_training_history');
+                localStorage.removeItem('forman_daily_plans');
+                updateHistoryTable();
+                updateCoachingLogTable();
+                renderDailyPlans();
+                updateAnalyticsDashboard();
+                showToast("Database Purged", "All historical operational records deleted cleanly.", "fa-trash-can", "bg-crimson-500");
+            }
+        }
+
+        // Save active walk draft to LocalStorage dynamically (Auto-save loop)
+        function saveCachedDraft() {
+            if (!walkActive) return;
+            
+            const activeDeployments = {
+                mens: getDraftDeploymentsArray('mens'),
+                womens: getDraftDeploymentsArray('womens'),
+                kids: getDraftDeploymentsArray('kids'),
+                home: getDraftDeploymentsArray('home')
+            };
+
+            const draft = {
+                startTime: walkStartTime ? walkStartTime.toISOString() : null,
+                auditor: document.getElementById('auditor-name').value,
+                shift: document.getElementById('shift-hours').value,
+                checkpoints: checkpoints,
+                escalations: document.getElementById('escalation-notes').value,
+                executiveNotes: document.getElementById('executive-notes').value,
+                signature: document.getElementById('manager-signature').value,
+                deployments: activeDeployments,
+                gaps: {
+                    sizing: document.getElementById('gap-sizing').checked,
+                    zlining: document.getElementById('gap-zlining').checked,
+                    hanger: document.getElementById('gap-hanger').checked,
+                    sets: document.getElementById('gap-sets').checked
+                }
+            };
+            localStorage.setItem('forman_active_draft', JSON.stringify(draft));
+            
+            const syncStatus = document.getElementById('sync-status');
+            syncStatus.innerHTML = `<span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span><span>Draft Auto-Saved</span>`;
+            setTimeout(() => {
+                syncStatus.innerHTML = `<span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span><span>Local Database Sync</span>`;
+            }, 1500);
+        }
+
+        function getDraftDeploymentsArray(padKey) {
+            const container = document.getElementById(`deployment-container-${padKey}`);
+            const rows = container.querySelectorAll(`[id^="row-${padKey}-"]`);
+            const out = [];
+            rows.forEach(row => {
+                out.push({
+                    associate: row.querySelector('.assoc-select').value,
+                    subarea: row.querySelector('.assoc-subarea-select').value,
+                    segment: row.querySelector('.assoc-segment').value,
+                    grade: row.querySelector('.assoc-grade').value,
+                    trainingNotes: row.querySelector('.assoc-training-notes').value,
+                    signedOff: row.querySelector('.assoc-signoff').checked
+                });
+            });
+            return out;
+        }
+
+        // Restore active draft if interrupted
+        function loadCachedDraft() {
+            const rawDraft = localStorage.getItem('forman_active_draft');
+            if (!rawDraft) return;
+            
+            const draft = JSON.parse(rawDraft);
+            if (confirm("An interrupted compliance walk was found. Would you like to restore your audit progress?")) {
+                walkActive = true;
+                walkStartTime = new Date(draft.startTime);
+                
+                document.getElementById('auditor-name').value = draft.auditor;
+                document.getElementById('shift-hours').value = draft.shift;
+                document.getElementById('escalation-notes').value = draft.escalations || '';
+                document.getElementById('executive-notes').value = draft.executiveNotes || '';
+                document.getElementById('manager-signature').value = draft.signature || '';
+                
+                if (draft.gaps) {
+                    document.getElementById('gap-sizing').checked = draft.gaps.sizing;
+                    document.getElementById('gap-zlining').checked = draft.gaps.zlining;
+                    document.getElementById('gap-hanger').checked = draft.gaps.hanger;
+                    document.getElementById('gap-sets').checked = draft.gaps.sets;
+                }
+
+                if (draft.deployments) {
+                    Object.keys(draft.deployments).forEach(padKey => {
+                        const container = document.getElementById(`deployment-container-${padKey}`);
+                        container.innerHTML = ''; 
+                        
+                        draft.deployments[padKey].forEach(rowItem => {
+                            addAssociateRow(padKey);
+                            const lastAddedRow = container.lastElementChild;
+                            
+                            lastAddedRow.querySelector('.assoc-select').value = rowItem.associate;
+                            lastAddedRow.querySelector('.assoc-segment').value = rowItem.segment;
+                            lastAddedRow.querySelector('.assoc-signoff').checked = rowItem.signedOff || false;
+                            lastAddedRow.querySelector('.assoc-grade').value = rowItem.grade;
+                            lastAddedRow.querySelector('.assoc-training-notes').value = rowItem.trainingNotes || '';
+                            lastAddedRow.querySelector('.assoc-subarea-select').value = rowItem.subarea || '';
+                        });
+                    });
+                }
+
+                if (draft.checkpoints) {
+                    Object.keys(draft.checkpoints).forEach(key => {
+                        const savedCp = draft.checkpoints[key];
+                        if (checkpoints[key]) {
+                            checkpoints[key].score = savedCp.score;
+                            checkpoints[key].status = savedCp.status;
+                            checkpoints[key].notes = savedCp.notes;
+                            
+                            const selectEl = document.getElementById(`score-${key}`);
+                            const noteEl = document.getElementById(`note-${key}`);
+                            if (selectEl) selectEl.value = savedCp.score;
+                            if (noteEl) noteEl.value = savedCp.notes || '';
+                            
+                            if (savedCp.status) {
+                                setCheckpointStatus(key, savedCp.status);
+                            }
+                        }
+                    });
+                }
+
+                document.getElementById('display-start-time').innerText = walkStartTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                document.getElementById('timestamp-info-banner').classList.remove('hidden');
+                document.getElementById('floor-audit-panel').classList.remove('hidden');
+                
+                document.getElementById('btn-timer-action').className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center space-x-2";
+                document.getElementById('timer-action-icon').className = "fa-solid fa-pause animate-pulse";
+                document.getElementById('timer-action-text').innerText = "Pause Active Run";
+                
+                document.getElementById('auditor-name').disabled = true;
+                document.getElementById('shift-hours').disabled = true;
+
+                walkTimerInterval = setInterval(updateLiveTimer, 1000);
+                calculateRealtimeMetrics();
+                showToast("Session Restored", "Your previous walk metrics have been synchronized.", "fa-clock-rotate-left", "bg-emerald-600");
+            } else {
+                localStorage.removeItem('forman_active_draft');
+            }
+        }
+
+        // Render history logs rows
+        function updateHistoryTable() {
+            const history = JSON.parse(localStorage.getItem('forman_audit_history') || '[]');
+            const container = document.getElementById('history-rows');
+            
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-8 text-center text-gray-400 font-medium">
+                            <i class="fa-solid fa-folder-open text-2xl mb-2 block"></i>
+                            No completed compliance audits found in database.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            history.forEach((audit, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-all text-xs border-b border-gray-100";
+                
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-gray-900">${audit.date} <span class="text-[10px] text-gray-500 font-normal block">${audit.startTime}</span></td>
+                    <td class="py-3 px-4 font-semibold text-gray-700">${audit.auditor.split(' ')[0]}</td>
+                    <td class="py-3 px-4"><span class="bg-navy-50 text-navy-700 py-0.5 px-2 rounded font-bold text-[10px]">${audit.shift}</span></td>
+                    <td class="py-3 px-4 text-center"><span class="font-extrabold text-emerald-600">${audit.fmi}</span></td>
+                    <td class="py-3 px-4 text-center"><span class="font-extrabold ${parseFloat(audit.scs) < 90 ? 'text-red-500' : 'text-emerald-600'}">${audit.scs}</span></td>
+                    <td class="py-3 px-4 text-gray-600 font-mono">${audit.duration}</td>
+                    <td class="py-3 px-4 text-center flex justify-center space-x-1.5">
+                        <button onclick="viewAuditDetails(${index})" class="text-navy-500 hover:text-navy-700 p-1.5 bg-navy-50 rounded-lg shadow-sm border border-navy-100" title="View Details"><i class="fa-solid fa-eye text-sm"></i></button>
+                    </td>
+                `;
+                container.appendChild(tr);
+            });
+        }
+
+        function viewAuditDetails(index) {
+            const history = JSON.parse(localStorage.getItem('forman_audit_history') || '[]');
+            const audit = history[index];
+            if (!audit) return;
+
+            let reportText = `=== FORMAN MILLS #611 COMPLIANCE SUMMARY ===\n`;
+            reportText += `Date: ${audit.date} | Shift: ${audit.shift}\n`;
+            reportText += `Manager: ${audit.auditor} | Signature: ${audit.signature}\n`;
+            reportText += `Floor Merchandising Index (FMI): ${audit.fmi}\n`;
+            reportText += `Safety Compliance Score (SCS): ${audit.scs}\n`;
+            reportText += `Duration: ${audit.duration}\n\n`;
+            
+            reportText += `[Assigned Pad Deployments]\n`;
+            if (audit.deployments) {
+                Object.keys(audit.deployments).forEach(p => {
+                    const depsList = audit.deployments[p];
+                    if (depsList.length > 0) {
+                        reportText += `• ${p.toUpperCase()}: ${depsList.map(d => `${d.associate} (${d.subarea || 'No Subarea'}, Grade:${d.grade})`).join(', ')}\n`;
+                    }
+                });
+            }
+            reportText += `\n`;
+            reportText += `[Executive Notes]\n${audit.executiveNotes || 'No notes written.'}\n\n`;
+            reportText += `[Frontline Escalations]\n${audit.escalations || 'No obstacles reported.'}\n`;
+
+            alert(reportText); 
+        }
+
+        function updateAnalyticsDashboard() {
+            const history = JSON.parse(localStorage.getItem('forman_audit_history') || '[]');
+            const logs = JSON.parse(localStorage.getItem('forman_training_history') || '[]');
+            document.getElementById('total-walks-stat').innerText = history.length;
+            
+            let totalFMI = 0;
+            let safetyDeficits = 0;
+
+            history.forEach(audit => {
+                totalFMI += parseFloat(audit.fmi || 0);
+                if (parseFloat(audit.scs || 0) < 90) safetyDeficits++;
+            });
+
+            const avgFMI = history.length > 0 ? (totalFMI / history.length).toFixed(1) : '0.0';
+            
+            document.getElementById('avg-fmi-stat').innerText = avgFMI + '%';
+            document.getElementById('safety-warnings-stat').innerText = safetyDeficits;
+            document.getElementById('training-count-stat').innerText = logs.length;
+
+            updateHistoryTable();
+            updateCoachingLogTable();
+        }
+
+        function resetAuditWorkspace() {
+            document.getElementById('live-timer').innerText = "00:00:00";
+            document.getElementById('index-fmi').innerText = "0.0%";
+            document.getElementById('index-scs').innerText = "0%";
+            
+            document.getElementById('auditor-name').value = '';
+            document.getElementById('shift-hours').value = '';
+            document.getElementById('auditor-name').disabled = false;
+            document.getElementById('shift-hours').disabled = false;
+            
+            document.getElementById('escalation-notes').value = '';
+            document.getElementById('executive-notes').value = '';
+            document.getElementById('manager-signature').value = '';
+
+            ['mens', 'womens', 'kids', 'home'].forEach(p => {
+                document.getElementById(`deployment-container-${p}`).innerHTML = '';
+                addAssociateRow(p);
+            });
+
+            document.getElementById('gap-sizing').checked = false;
+            document.getElementById('gap-zlining').checked = false;
+            document.getElementById('gap-hanger').checked = false;
+            document.getElementById('gap-sets').checked = false;
+            document.getElementById('gap-speed').checked = false;
+            document.getElementById('gap-discipline').checked = false;
+            document.getElementById('gap-dock').checked = false;
+            document.getElementById('gap-showcase').checked = false;
+
+            document.getElementById('floor-audit-panel').classList.add('hidden');
+            document.getElementById('timestamp-info-banner').classList.add('hidden');
+            
+            Object.keys(checkpoints).forEach(key => {
+                checkpoints[key].status = null;
+                checkpoints[key].score = 3;
+                checkpoints[key].notes = '';
+                
+                const scoreSelect = document.getElementById(`score-${key}`);
+                const noteInput = document.getElementById(`note-${key}`);
+                if (scoreSelect) scoreSelect.value = 3;
+                if (noteInput) noteInput.value = '';
+                
+                const pBtn = document.getElementById(`btn-${key}-P`);
+                const fBtn = document.getElementById(`btn-${key}-F`);
+                if (pBtn) pBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-300 bg-white hover:bg-emerald-50 hover:text-emerald-600 transition-all";
+                if (fBtn) fBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-300 bg-white hover:bg-red-50 hover:text-red-600 transition-all";
+            });
+
+            document.getElementById('btn-timer-action').className = "w-full bg-crimson-500 hover:bg-crimson-600 text-white font-bold py-2.5 px-4 rounded-lg text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center space-x-2";
+            document.getElementById('timer-action-icon').className = "fa-solid fa-play";
+            document.getElementById('timer-action-text').innerText = "Initialize Walk Audit";
+        }
+
+        // Toasts
+        function showToast(title, message, iconClass, bgThemeClass) {
+            const toast = document.getElementById('toast-notification');
+            const icon = document.getElementById('toast-icon');
+            const titleEl = document.getElementById('toast-title');
+            const messageEl = document.getElementById('toast-message');
+
+            toast.className = `fixed bottom-20 right-4 left-4 sm:left-auto sm:max-w-sm text-white rounded-xl shadow-2xl p-4 z-50 transition-all duration-300 ${bgThemeClass}`;
+            icon.className = `fa-solid ${iconClass} text-white`;
+            titleEl.innerText = title;
+            messageEl.innerText = message;
+
+            toast.classList.remove('hidden');
+            toast.style.opacity = '1';
+
+            setTimeout(closeToast, 4000);
+        }
+
+        function closeToast() {
+            const toast = document.getElementById('toast-notification');
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+</body>
+</html>
