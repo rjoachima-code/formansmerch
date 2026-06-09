@@ -1,0 +1,182 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
+model CorporatePolicy {
+  id                       String   @id @default(uuid())
+  title                    String
+  purpose                  String
+  scope                    String
+  policyStatement          String
+  responsibilities         String
+  procedures               String
+  complianceAndEnforcement String
+  definitions              String
+  effectiveDate            DateTime
+  escalationProcess        Json // Stores as JSON array
+
+  version    Int     @default(1)
+  isArchived Boolean @default(false)
+
+  revisionHistory PolicyAudit[]
+}
+
+model PolicyAudit {
+  id              String   @id @default(uuid())
+  policyId        String
+  version         Int
+  updatedAt       DateTime @default(now())
+  updatedBy       String?
+  archivedContent Json // Stores the entire previous state
+
+  policy CorporatePolicy @relation(fields: [policyId], references: [id])
+}
+
+model HandbookSection {
+  id               String   @id @default(uuid())
+  title            String
+  content          String
+  applicableStates String[] // e.g., ["CA", "NY", "ALL"]
+  orderIndex       Int      @default(0)
+}
+
+model HandbookSignature {
+  id                String   @id @default(uuid())
+  userId            String
+  ipAddress         String?
+  timestamp         DateTime @default(now())
+  cryptographicHash String // Immutable hash representing the acknowledgment
+}
+
+model User {
+  id                  String   @id @default(uuid())
+  email               String   @unique
+  name                String?
+  role                String?
+  assignedDepartments String[]
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  storeId             String?
+  store               Store?   @relation(fields: [storeId], references: [id])
+
+  compliances        PlanogramCompliance[]
+}
+
+model StoreSOP {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  content     String
+  iconName    String   @default("FileText") // Lucide icon name
+  departments String[]
+
+  tasks       TaskItem[]
+  suggestions ProcedureImprovementSuggestion[]
+}
+
+model ProcedureImprovementSuggestion {
+  id                String   @id @default(uuid())
+  sopId             String
+  submittedByUserId String?
+  submittedByName   String
+  submittedByRole   String?
+  department        String
+  suggestion        String
+  createdAt         DateTime @default(now())
+
+  sop StoreSOP @relation(fields: [sopId], references: [id])
+}
+
+model TaskItem {
+  id          String  @id @default(uuid())
+  title       String
+  isCompleted Boolean @default(false)
+
+  sopId String?
+  sop   StoreSOP? @relation(fields: [sopId], references: [id])
+}
+
+model Store {
+  id                   String @id @default(uuid())
+  name                 String
+  state                String
+  latitude             Float?
+  longitude            Float?
+  healthScore          Int    @default(100)
+  openTime             String @default("09:00") // HH:mm format
+  districtManagerEmail String?
+  timezone             String @default("America/New_York")
+  
+  taskInstances        TaskInstance[]
+  users                User[]
+  compliances         PlanogramCompliance[]
+}
+
+model TaskTemplate {
+  id              String   @id @default(uuid())
+  title           String
+  description     String
+  scheduledTime   String?  // HH:mm format
+  isCritical      Boolean  @default(false)
+  requiredSteps   Json     // Array of steps
+  assignedRoles   String[] 
+  
+  instances       TaskInstance[]
+}
+
+model TaskInstance {
+  id                 String    @id @default(uuid())
+  templateId         String
+  storeId            String
+  date               DateTime  @db.Date
+  status             String    @default("PENDING") // PENDING, COMPLETED, BLOCKED
+  completedAt        DateTime?
+  blockerReasonCode  String?
+  blockerExplanation String?
+  currentStep        Int       @default(0)
+  
+  template           TaskTemplate @relation(fields: [templateId], references: [id])
+  store              Store        @relation(fields: [storeId], references: [id])
+  
+  @@unique([templateId, storeId, date])
+}
+
+model PlanogramDirective {
+  id              String   @id @default(uuid())
+  title           String
+  description     String?
+  department      String
+  referenceImage  String   // URL to reference planogram image
+  startDate       DateTime
+  endDate         DateTime
+  requiredFixtures String[] // e.g., ["2-tier fixture", "gondola", "pegboard"]
+  s3Key           String?  // S3 object key for the reference image
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  compliances     PlanogramCompliance[]
+}
+
+model PlanogramCompliance {
+  id              String   @id @default(uuid())
+  directiveId     String
+  storeId         String
+  managerId       String
+  complianceImage String   // URL to uploaded compliance photo
+  s3Key           String   // S3 object key for compliance image
+  notes           String?
+  submittedAt     DateTime @default(now())
+  score           Int?     @default(0) // Compliance score 0-100
+
+  directive PlanogramDirective @relation(fields: [directiveId], references: [id])
+  store     Store              @relation(fields: [storeId], references: [id])
+  manager   User               @relation(fields: [managerId], references: [id])
+
+  @@unique([directiveId, storeId])
+}

@@ -1,8 +1,14 @@
-# Accessibility & Compatibility Fix Plan
+- [x] Fix import path in app/store/dashboard/page.tsx for StoreSopViewer
+- [x] Add required Next.js/Vercel scripts to package.json (dev, build, start, vercel-build)
+- [x] Identify current failing build stage and error details
+- [x] Update lib/prisma.ts Prisma client initialization to avoid build-time PrismaClientOptions validation error
+- [x] Run npm run vercel-build and confirm successful build
+- [x] Mark TODO checklist complete
 
-- [x] Add robust cross-browser scrollbar fallback styles in `index.html` (`::-webkit-scrollbar` support alongside existing rules).
-- [x] Add explicit `id` + matching `for` attributes for visible labels where missing.
-- [x] Add `aria-label` and `title` attributes to all form controls (`input`, `select`, `textarea`) in Planner, Audit, Dispatcher, and SOP sections.
-- [x] Add placeholders to eligible text-capable fields where needed.
-- [x] Preserve all existing business logic and data constants exactly (no logic rewrite).
-- [x] Validate final HTML structure remains single-file deployable.
+## Planogram Feature (New)
+- [x] Create PlanogramDirective model with image URLs, dates, fixtures
+- [x] Create PlanogramCompliance model for store submissions
+- [x] Create corporate side (/app/corp/merchandising/create) for uploading reference images
+- [x] Create store side (/app/store/merchandising/execute) with camera interface
+- [x] Add imageProcessor.ts for client-side compression before S3 upload
+- [x] Add API routes for planogram CRUD and image upload

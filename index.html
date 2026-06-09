@@ -278,8 +278,9 @@
 
     <!-- Footer Controls -->
     <footer class="fixed bottom-0 w-full bg-white border-t border-gray-200 p-2 flex justify-between gap-2 z-50">
-        <button type="button" onclick="exportCSV()" class="flex-1 bg-slate-200 text-navy font-bold py-3 rounded text-sm touch-target">Export CSV Log</button>
-        <button type="button" onclick="showOfflineModal()" class="flex-1 bg-slate-200 text-navy font-bold py-3 rounded text-sm touch-target">Share &amp; Install</button>
+        <button type="button" onclick="exportCSV()" class="flex-1 bg-slate-200 text-navy font-bold py-3 rounded text-sm touch-target transition-colors hover:bg-slate-300">Export CSV Log</button>
+        <button type="button" onclick="showOfflineModal()" class="flex-1 bg-slate-200 text-navy font-bold py-3 rounded text-sm touch-target transition-colors hover:bg-slate-300">Share &amp; Install</button>
+        <button type="button" onclick="resetAppData()" class="flex-1 bg-red-100 text-crimson font-bold py-3 rounded text-sm touch-target transition-colors hover:bg-red-200">Reset Data</button>
         <div id="autosave-indicator" class="absolute top-0 right-2 -mt-6 text-xs font-bold text-emerald opacity-0 transition-opacity">Auto-saved</div>
     </footer>
 
@@ -741,6 +742,15 @@
             a.click();
             document.body.removeChild(a);
             hideOfflineModal();
+        }
+
+        function resetAppData() {
+            if (confirm("Are you sure you want to reset all data and start a new walk? This will clear all current inputs.")) {
+                localStorage.removeItem('forman611-state');
+                localStorage.removeItem('audit-secure-start');
+                localStorage.removeItem('audit-secure-end');
+                window.location.reload();
+            }
         }
 
         // Run Init on Load
