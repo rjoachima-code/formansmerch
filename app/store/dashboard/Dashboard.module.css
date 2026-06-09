@@ -71,15 +71,7 @@
   transition: background-color 0.2s;
 }
 
-.loadingText {
-  color: #6b7280;
-}
-
 .loadingText,
-.emptyText {
-  color: #6b7280;
-}
-
 .emptyText {
   color: #6b7280;
 }
