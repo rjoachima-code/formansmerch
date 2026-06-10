@@ -1,83 +1,55 @@
-# TODO - Redesigned Pad Ownership & Evaluation Grid (Step 3+) Implementation
+# TODO - FM611 App Stabilization, SOP Fixes, Camera Enhancements, Zeeky Upgrade
 
 ## Approved Scope
-- [ ] Implement all requested Step 3 redesign updates and complete end-to-end.
-- [ ] Add chatbot UI/logic scaffold for interactive in-app support.
-- [ ] Add automated image description generation flow (Gemini-ready integration scaffold).
-- [ ] Prepare commits as milestones once changes are completed.
+- [x] User approved implementation plan.
+- [ ] Run full project tests and report results.
+- [ ] Analyze full app and implement high-impact fixes/improvements.
+- [ ] Fix SOP page associate dropdown selection issue.
+- [ ] Improve camera capture feature for walk/training evidence.
+- [ ] Normalize naming to FM611 where appropriate.
+- [ ] Remove requested sentence/content.
+- [ ] Improve Zeeky (He) chatbot behavior and utility.
+- [ ] Deliver recommendations to make the app better.
 
 ## Work Breakdown
 
-### 1) Step 3 Ownership / Evaluation Grid
-- [ ] Confirm and keep "Clearance Owner" checkbox removed in UI.
-- [ ] Remove stale `clearanceOwner` data key from JS draft persistence.
-- [ ] Keep / validate sub-area ownership selector per row.
-- [ ] Keep / validate performance grade dropdown (10 to 1) per row.
-- [ ] Keep / validate manager training notes input per row.
-- [ ] Keep / validate associate sign-off pledge card under each assignment row.
+### 1) Stabilize Runtime / Data Sources
+- [ ] Add/verify centralized `masterAssociates` array used by dropdown builders.
+- [ ] Ensure `populateRosterDropdowns()` targets existing selectors only.
+- [ ] Resolve `sync-status` null reference (guard or add element).
+- [ ] Correct HTML attribute bug: `htmlFor` -> `for`.
 
-### 2) Expanded Training Gap Matrix Persistence
-- [ ] Ensure submit payload includes:
-  - [ ] `gap-sizing`
-  - [ ] `gap-zlining`
-  - [ ] `gap-hanger`
-  - [ ] `gap-sets`
-  - [ ] `gap-speed`
-  - [ ] `gap-discipline`
-  - [ ] `gap-dock`
-  - [ ] `gap-showcase`
-- [ ] Ensure draft auto-save includes all 8 gap flags.
-- [ ] Ensure draft restore includes all 8 gap flags.
-- [ ] Ensure reset clears all 8 gap flags.
+### 2) SOP Associate Dropdown Bug Fix
+- [ ] Ensure associate dropdown options are populated on initialization.
+- [ ] Ensure dynamic assignment rows default to valid options.
+- [ ] Verify SOP training associate selector is selectable and functional.
 
-### 3) Refactor Dock Safety SOPs (Module 6)
-- [ ] Replace old conveyor-track checklist wording in audit schema.
-- [ ] Add manual dock door bolting/locking safety standard language.
-- [ ] Add mechanical dock plate & leveler bar deployment language.
-- [ ] Keep wording aligned with real-world store safety SOP intent.
+### 3) Camera Feature Upgrade
+- [ ] Keep existing camera capture support for Walk Audit + SOP Training.
+- [ ] Add lightweight preview/status metadata persistence.
+- [ ] Save image metadata (filename/time/section) to localStorage.
+- [ ] Surface attached-photo indicators in relevant logs/details where practical.
 
-### 4) Walk Audit Camera Capture
-- [ ] Add camera-capture input in Walk Audit section:
-  - [ ] `type="file"`
-  - [ ] `accept="image/*"`
-  - [ ] `capture="environment"`
-- [ ] Add lightweight preview + clear control.
-- [ ] Add metadata hook into audit payload for captured evidence summary.
-- [ ] Keep mobile-friendly UX.
+### 4) Requested Content Updates
+- [ ] Replace/normalize “#611 / m611” references to “FM611” where needed.
+- [ ] Remove sentence: “Big Men's department runs must have oversized visual tags to avoid mixing.”
+- [ ] Keep Big Men language otherwise consistent and clean.
 
-### 5) Print Architecture (PWA-friendly printable operations document)
-- [ ] Add `@media print` CSS for clean black-and-white output.
-- [ ] Hide interactive-only UI during print (buttons/nav/toasts/modals).
-- [ ] Optimize typography/spacing/borders for hardcopy binder output.
-- [ ] Add/ensure `print:hidden` on non-print controls where needed.
+### 5) Zeeky (He) Chatbot Improvements
+- [ ] Keep existing Zeeky tab and persona.
+- [ ] Expand intent responses for SOP/training/walk support.
+- [ ] Add concise help/quick-guide behavior for common prompts.
+- [ ] Keep offline deterministic fallback responses.
 
-### 6) Interactive Chatbot (In-App Assistant)
-- [ ] Add chatbot launch button and panel UI.
-- [ ] Add conversation log rendering with message history in-session.
-- [ ] Add contextual quick-help prompts for app tabs/features.
-- [ ] Add local FAQ intent routing fallback (offline/basic mode).
-- [ ] Add placeholder Gemini API integration method for real responses.
-- [ ] Add safe API key usage note (no hardcoded key in client).
+### 6) Testing & Validation
+- [ ] Run project test scripts from `package.json` (and build/lint if available).
+- [ ] Validate no blocking console/runtime errors for key flows.
+- [ ] Verify dropdown bug and camera feature behavior after changes.
 
-### 7) Automated Content Generation for Uploaded Images
-- [ ] Reuse camera/file upload to trigger description generation flow.
-- [ ] Add "Generate Description" action.
-- [ ] Add output field for generated caption/description.
-- [ ] Add Gemini-ready request function scaffold (text+image multimodal).
-- [ ] Add graceful fallback message when API not configured.
-
-### 8) Validation
-- [ ] Sanity-check core flows in browser:
-  - [ ] Step 3 row add/remove + data capture.
-  - [ ] Training gaps submit/save/restore/reset.
-  - [ ] Module 6 revised wording visibility.
-  - [ ] Camera capture preview behavior.
-  - [ ] Print preview correctness.
-  - [ ] Chatbot interaction baseline.
-  - [ ] Image description generation fallback/scaffold behavior.
-
-### 9) Git Milestone Commits
-- [ ] Commit 1: Step 3 + training gaps + SOP refactor.
-- [ ] Commit 2: Camera + print architecture.
-- [ ] Commit 3: Chatbot + image description generation.
-- [ ] Commit 4: Final polish/validation updates.
+### 7) Final App Analysis (What can be improved)
+- [ ] Provide concise technical improvement report:
+  - [ ] Reliability/bug risk
+  - [ ] UX and accessibility
+  - [ ] Data persistence/backup
+  - [ ] Maintainability/refactor opportunities
+  - [ ] Performance optimizations
