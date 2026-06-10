@@ -38,6 +38,9 @@ export default function CreatePlanogramPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Validate that previewUrl is a blob URL before rendering
+  const safePreviewUrl = previewUrl.startsWith('blob:') ? previewUrl : ''
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
@@ -244,8 +247,6 @@ export default function CreatePlanogramPage() {
               ))}
             </div>
           </div>
-
-  const safePreviewUrl = previewUrl.startsWith('blob:') ? previewUrl : ''
 
           <div>
             <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
